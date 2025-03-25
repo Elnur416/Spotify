@@ -18,12 +18,26 @@ final class ApiCaller {
     private init() {}
     
     struct Constants {
-        static let baseURL = "https://api.spotify.com/v1/me"
+        static let baseAPIURL = "https://api.spotify.com/v1"
     }
     
-    private func getCurrentUserProfile(completion: @escaping ((UserProfile?, String?) -> Void)) {
-        createRequest(url: URL(string: "")) { baseRequest in
-            
+    func getCurrentUserProfile(completion: @escaping ((UserProfile?, String?) -> Void)) {
+        createRequest(url: URL(string: Constants.baseAPIURL + "/me")) { baseRequest in
+            guard let baseRequest = baseRequest else { return }
+            let task = URLSession.shared.dataTask(with: baseRequest) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(nil, error?.localizedDescription)
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(UserProfile.self, from: data)
+                    completion(result, nil)
+                } catch {
+                    completion(nil, error.localizedDescription)
+                }
+            }
+            task.resume()
         }
     }
     
