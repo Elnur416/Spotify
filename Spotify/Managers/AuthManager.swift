@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 
 final class AuthManager {
     static let shared = AuthManager()
@@ -60,38 +61,33 @@ final class AuthManager {
     //    MARK: - Get Token
     
     func exchangeCodeForToken(code: String, completion: @escaping((Bool) -> Void)) {
-        guard let url = URL(string: Constants.tokenAPIURL) else { return }
-        var components = URLComponents()
-        components.queryItems = [
-            URLQueryItem(name: "grant_type",value: "authorization_code"),
-            URLQueryItem(name: "code", value: code),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "client_id", value: Constants.clientID),
+        let url = Constants.tokenAPIURL
+        let parameters: [String: String] = [
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": Constants.redirectURI,
+            "client_id": Constants.clientID
         ]
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded",
-                         forHTTPHeaderField: "Content-Type")
-        request.httpBody = components.query?.data(using: .utf8)
+        
         let basicToken = Constants.clientID + ":" + Constants.clientSecret
         let data = basicToken.data(using: .utf8)!
         let base64String = data.base64EncodedString()
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic \(base64String)"
+        ]
         
-        request.setValue("Basic \(base64String)",
-                         forHTTPHeaderField: "Authorization")
-        let task = URLSession.shared.dataTask(with: request) { [weak self] data, _, error in
-            guard let data = data, error == nil else { return }
-            
-            do {
-                let result = try JSONDecoder().decode(AuthResponse.self, from: data)
-                self?.cacheToken(result: result)
-                completion(true)
-            } catch {
-                print(error.localizedDescription)
-                completion(false)
+        AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            .responseDecodable(of: AuthResponse.self) { response in
+                switch response.result {
+                case .success(let result):
+                    self.cacheToken(result: result)
+                    completion(true)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    completion(false)
+                }
             }
-        }
-        task.resume()
     }
     
     private var onRefreshBlocks = [((String) -> Void)]()
@@ -122,49 +118,44 @@ final class AuthManager {
             completion(true)
             return
         }
+        
         guard let refreshToken = self.refreshToken else { return }
         
-//        Refresh Token
-        guard let url = URL(string: Constants.tokenAPIURL) else { return }
-        
+        let url = Constants.tokenAPIURL
         refreshingToken = true
         
-        var components = URLComponents()
-        components.queryItems = [
-            URLQueryItem(name: "grant_type",value: "refresh_token"),
-            URLQueryItem(name: "refresh_token.", value: refreshToken),
+        let parameters: [String: String] = [
+            "grant_type": "refresh_token",
+            "refresh_token": refreshToken
         ]
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded",
-                         forHTTPHeaderField: "Content-Type")
-        request.httpBody = components.query?.data(using: .utf8)
+        
         let basicToken = Constants.clientID + ":" + Constants.clientSecret
         let data = basicToken.data(using: .utf8)!
         let base64String = data.base64EncodedString()
         
-        request.setValue("Basic \(base64String)",
-                         forHTTPHeaderField: "Authorization")
-        let task = URLSession.shared.dataTask(with: request) { [weak self] data, _, error in
-            self?.refreshingToken = false
-            
-            guard let data = data, error == nil else { return }
-            
-            do {
-                let result = try JSONDecoder().decode(AuthResponse.self, from: data)
-                self?.onRefreshBlocks.forEach { $0(result.accessToken ?? "") }
-                self?.onRefreshBlocks.removeAll()
-                self?.cacheToken(result: result)
-                completion(true)
-            } catch {
-                print(error.localizedDescription)
-                completion(false)
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic \(base64String)"
+        ]
+        
+        AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+            .responseDecodable(of: AuthResponse.self) { [weak self] response in
+                self?.refreshingToken = false
+                
+                switch response.result {
+                case .success(let result):
+                    self?.onRefreshBlocks.forEach { $0(result.accessToken ?? "") }
+                    self?.onRefreshBlocks.removeAll()
+                    self?.cacheToken(result: result)
+                    completion(true)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    completion(false)
+                }
             }
-        }
-        task.resume()
     }
     
-//    MARK: - Cache Token
+    //    MARK: - Cache Token
     
     private func cacheToken(result: AuthResponse) {
         UserDefaults.standard.setValue(result.accessToken,
