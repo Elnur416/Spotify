@@ -9,11 +9,16 @@ import Foundation
 
 final class ProfileViewModel {
     private(set) var user: UserProfile?
+    private let useCase: UserUseCase
     var success: (() -> Void)?
     var errorHandler: ((String) -> Void)?
     
-    func getCurrentUser() {
-        ApiCaller.shared.getCurrentUserProfile { data, error in
+    init(useCase: UserUseCase) {
+        self.useCase = useCase
+    }
+    
+    func getCurrentUser2() {
+        useCase.getCurrentUserProfile { data, error in
             if let data {
                 self.user = data
                 self.success?()
