@@ -9,8 +9,9 @@ import Foundation
 
 enum UserEndpoint: String {
     case currentUser = "/me"
+    case userPlaylists = "/me/playlists"
     
     var path: String {
-        return NetworkHelper.shared.baseAPIURL + self.rawValue
+        return NetworkHelper.shared.configureURL(endpoint: self.rawValue)
     }
 }

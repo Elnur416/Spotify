@@ -16,6 +16,7 @@ struct UserProfile: Codable {
     let id: String?
     let product: String?
     let images: [UserImage]?
+    let followers: Followers?
     
     enum CodingKeys: String, CodingKey {
         case country, email, id, product
@@ -23,10 +24,16 @@ struct UserProfile: Codable {
         case explicitContent = "explicit_content"
         case externalUrls = "external_urls"
         case images
+        case followers
     }
     
     struct UserImage: Codable {
         let url: String?
+    }
+    
+    struct Followers: Codable {
+        let href: String?
+        let total: Int?
     }
 }
 

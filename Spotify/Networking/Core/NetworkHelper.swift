@@ -19,4 +19,8 @@ final class NetworkHelper {
     private init() {}
     
     let baseAPIURL = "https://api.spotify.com/v1"
+    
+    func configureURL(endpoint: String) -> String {
+        return baseAPIURL + endpoint
+    }
 }

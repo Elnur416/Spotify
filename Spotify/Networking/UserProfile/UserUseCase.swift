@@ -9,4 +9,5 @@ import Foundation
 
 protocol UserUseCase {
     func getCurrentUserProfile(completion: @escaping ((UserProfile?, String?) -> Void))
+    func getUserPlaylists(completion: @escaping((Playlists?, String?) -> Void))
 }

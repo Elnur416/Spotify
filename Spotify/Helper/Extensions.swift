@@ -7,6 +7,7 @@
 
 import UIKit
 import Foundation
+import SDWebImage
 
 extension UIViewController {
     func showAlert(title: String? = "Error",
@@ -18,5 +19,11 @@ extension UIViewController {
         alert.addAction(UIAlertAction(title: action,
                                       style: .cancel))
         present(alert, animated: true)
+    }
+}
+
+extension UIViewController {
+    func load(image: UIImageView, url: String) {
+        image.sd_setImage(with: URL(string: url))
     }
 }

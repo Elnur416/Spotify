@@ -17,4 +17,11 @@ final class UserManager: UserUseCase {
                         model: UserProfile.self,
                         completion: completion)
     }
+    
+    func getUserPlaylists(completion: @escaping ((Playlists?, String?) -> Void)) {
+        let path = UserEndpoint.userPlaylists.path
+        manager.request(path: path,
+                        model: Playlists.self,
+                        completion: completion)
+    }
 }
