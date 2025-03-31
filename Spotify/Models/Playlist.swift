@@ -15,11 +15,11 @@ struct Playlists: Codable {
     let offset: Int?
     let previous: String?
     let total: Int?
-    let items: [Item]?
+    let items: [PlaylistItem]?
 }
 
 // MARK: - Item
-struct Item: Codable {
+struct PlaylistItem: Codable {
     let collaborative: Bool?
     let description: String?
     let externalUrls: ExternalUrls?

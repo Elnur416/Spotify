@@ -98,6 +98,8 @@ class ProfileController: BaseController {
         l.textColor = .lightGray
         l.numberOfLines = 0
         l.textAlignment = .left
+        l.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showFollowingArtists)))
+        l.isUserInteractionEnabled = true
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
     }()
@@ -110,6 +112,30 @@ class ProfileController: BaseController {
         l.textAlignment = .left
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
+    }()
+    
+    private lazy var table: UITableView = {
+        let t = UITableView()
+        t.backgroundColor = .clear
+        t.isScrollEnabled = false
+        t.dataSource = self
+        t.delegate = self
+        t.register(PlaylistCell.self, forCellReuseIdentifier: "\(PlaylistCell.self)")
+        t.translatesAutoresizingMaskIntoConstraints = false
+        return t
+    }()
+    
+    private lazy var seeAllPlaylistButton: UIButton = {
+        let b = UIButton(type: .custom)
+        b.setTitle( "See all playlists", for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+        b.setTitleColor(.white, for: .normal)
+        b.layer.cornerRadius = 16
+        b.layer.borderWidth = 1
+        b.layer.borderColor = UIColor.lightGray.cgColor
+        b.addTarget(self, action: #selector(showAllPlaylists), for: .touchUpInside)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
     }()
     
     private lazy var indicatorview: UIActivityIndicatorView = {
@@ -138,6 +164,7 @@ class ProfileController: BaseController {
         super.viewDidLoad()
         
         viewModel.getCurrentUser()
+        viewModel.getFollowedArtists()
         viewModel.getUserPlaylists()
     }
     
@@ -149,7 +176,9 @@ class ProfileController: BaseController {
          name,
          email,
          followView,
-         playlist].forEach { view.addSubview($0) }
+         playlist,
+         table,
+         seeAllPlaylistButton].forEach { view.addSubview($0) }
         
         [followerNumber,
          follower,
@@ -157,11 +186,15 @@ class ProfileController: BaseController {
          followingNumber,
          following].forEach { followView.addSubview($0) }
         indicatorview.frame = view.bounds
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "ellipsis"),
+                                                            style: .plain,
+                                                            target: self,
+                                                            action: #selector(showOptions))
     }
     
     override func setupConstraints() {
         NSLayoutConstraint.activate([
-            image.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            image.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 28),
             image.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             image.widthAnchor.constraint(equalToConstant: 100),
             image.heightAnchor.constraint(equalToConstant: 100),
@@ -196,7 +229,17 @@ class ProfileController: BaseController {
             
             playlist.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 40),
             playlist.leadingAnchor.constraint(equalTo: image.leadingAnchor),
-            playlist.trailingAnchor.constraint(equalTo: name.trailingAnchor)
+            playlist.trailingAnchor.constraint(equalTo: name.trailingAnchor),
+            
+            table.topAnchor.constraint(equalTo: playlist.bottomAnchor, constant: 16),
+            table.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            table.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            table.heightAnchor.constraint(equalToConstant: 200),
+            
+            seeAllPlaylistButton.topAnchor.constraint(equalTo: table.bottomAnchor, constant: 28),
+            seeAllPlaylistButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            seeAllPlaylistButton.heightAnchor.constraint(equalToConstant: 32),
+            seeAllPlaylistButton.widthAnchor.constraint(equalToConstant: 100)
         ])
     }
     
@@ -209,7 +252,7 @@ class ProfileController: BaseController {
                 self?.indicatorview.stopAnimating()
             case .success:
                 self?.configureUserInfo()
-                print(self?.viewModel.playlists)
+                self?.table.reloadData()
             case .error(let error):
                 self?.showAlert(message: error)
             case .idle:
@@ -227,9 +270,45 @@ class ProfileController: BaseController {
         view.layer.addSublayer(gradientLayer)
     }
     
+    @objc private func showFollowingArtists() {
+        let controller = FollowingArtistsController(viewModel: .init(artists: viewModel.artists))
+        navigationController?.show(controller, sender: nil)
+    }
+    
+    @objc private func showAllPlaylists() {
+        let controller = PlaylistsListController(viewModel: .init(playLists: viewModel.playlists))
+        navigationController?.show(controller, sender: nil)
+    }
+    
+    @objc private func showOptions() {
+        
+    }
+    
+//    MARK: - Configure user info
+    
     private func configureUserInfo() {
         self.load(image: image, url: viewModel.user?.images?.first?.url ?? "")
         name.text = viewModel.user?.displayName
         email.text = viewModel.user?.email
+        followerNumber.text = "\(viewModel.user?.followers?.total ?? 0)"
+        followingNumber.text = "\(viewModel.artists.count)"
+    }
+}
+
+//MARK: - Configure TableView
+
+extension ProfileController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.playlists.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "\(PlaylistCell.self)", for: indexPath) as! PlaylistCell
+        cell.configure(model: viewModel.playlists[indexPath.item])
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        UITableView.automaticDimension
     }
 }

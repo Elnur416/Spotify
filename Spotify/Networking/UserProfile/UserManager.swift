@@ -24,4 +24,11 @@ final class UserManager: UserUseCase {
                         model: Playlists.self,
                         completion: completion)
     }
+    
+    func getFollowedArtists(completion: @escaping ((Artists?, String?) -> Void)) {
+        let path = UserEndpoint.followedArtists.path
+        manager.request(path: path,
+                        model: Artists.self,
+                        completion: completion)
+    }
 }

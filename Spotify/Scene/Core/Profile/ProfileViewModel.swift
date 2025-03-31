@@ -9,7 +9,8 @@ import Foundation
 
 final class ProfileViewModel {
     private(set) var user: UserProfile?
-    private(set) var playlists: Playlists?
+    private(set) var artists = [ArtistInfo]()
+    private(set) var playlists = [PlaylistItem]()
     private let useCase: UserUseCase
     
     init(useCase: UserUseCase) {
@@ -45,11 +46,26 @@ final class ProfileViewModel {
         }
     }
     
+    func getFollowedArtists() {
+        state = .loading
+        useCase.getFollowedArtists { data, error in
+            if let data {
+                guard let items = data.artists?.items else { return }
+                self.artists = items
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
     func getUserPlaylists() {
         state = .loading
         useCase.getUserPlaylists { data, error in
             if let data {
-                self.playlists = data
+                guard let items = data.items else { return }
+                self.playlists = items
                 self.state = .loaded
                 self.state = .success
             } else if let error {

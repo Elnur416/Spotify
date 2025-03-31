@@ -26,14 +26,14 @@ struct UserProfile: Codable {
         case images
         case followers
     }
-    
-    struct UserImage: Codable {
-        let url: String?
-    }
-    
-    struct Followers: Codable {
-        let href: String?
-        let total: Int?
-    }
+}
+
+struct UserImage: Codable {
+    let url: String?
+}
+
+struct Followers: Codable {
+    let href: String?
+    let total: Int?
 }
 
