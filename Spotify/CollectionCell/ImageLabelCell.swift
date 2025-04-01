@@ -59,4 +59,9 @@ class ImageLabelCell: UICollectionViewCell {
             name.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
+    
+    func configure(model: HomeDataProtocol) {
+        load(image: image, url: model.imageURL)
+        name.text = model.nameText
+    }
 }

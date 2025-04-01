@@ -29,7 +29,7 @@ struct PlaylistItem: Codable {
     let owner: Owner?
     let itemPublic: Bool?
     let snapshotID: String?
-    let tracks: Tracks?
+    let tracks: Track?
     let type, uri: String?
 
     enum CodingKeys: String, CodingKey {
@@ -68,7 +68,7 @@ struct Owner: Codable {
 }
 
 // MARK: - Tracks
-struct Tracks: Codable {
+struct Track: Codable {
     let href: String?
     let total: Int?
 }

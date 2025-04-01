@@ -34,6 +34,12 @@ extension UITableViewCell {
     }
 }
 
+extension UICollectionViewCell {
+    func load(image: UIImageView, url: String) {
+        image.sd_setImage(with: URL(string: url))
+    }
+}
+
 extension UINavigationController {
     public override var navigationController: UINavigationController? {
         navigationBar.tintColor = .white

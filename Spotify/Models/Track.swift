@@ -1,5 +1,5 @@
 //
-//  Artist.swift
+//  AudioTrack.swift
 //  Spotify
 //
 //  Created by Elnur Mammadov on 18.03.25.
@@ -7,30 +7,19 @@
 
 import Foundation
 
-// MARK: - Artists
-struct Artists: Codable {
-    let artists: ArtistsClass?
-}
-
-// MARK: - ArtistsClass
-struct ArtistsClass: Codable {
+// MARK: - Tracks
+struct Tracks: Codable {
     let href: String?
     let limit: Int?
     let next: String?
-    let cursors: Cursors?
-    let total: Int?
-    let items: [ArtistInfo]?
     let offset: Int?
     let previous: String?
-}
-
-// MARK: - Cursors
-struct Cursors: Codable {
-    let after, before: String?
+    let total: Int?
+    let items: [TrackItem]?
 }
 
 // MARK: - Item
-struct ArtistInfo: Codable, HomeDataProtocol {
+struct TrackItem: Codable, HomeDataProtocol {
     let externalUrls: ExternalUrls?
     let followers: Followers?
     let genres: [String]?
@@ -47,7 +36,6 @@ struct ArtistInfo: Codable, HomeDataProtocol {
     var imageURL: String {
         images?.first?.url ?? ""
     }
-
 
     enum CodingKeys: String, CodingKey {
         case externalUrls = "external_urls"

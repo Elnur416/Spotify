@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HeaderSectionCell: UICollectionViewCell {
+class HomeSectionCell: UICollectionViewCell {
     
 //    MARK: UI elements
     
@@ -34,6 +34,10 @@ class HeaderSectionCell: UICollectionViewCell {
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
+    
+//    MARK: - Properties
+    
+    var data = [HomeDataProtocol]()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,15 +68,21 @@ class HeaderSectionCell: UICollectionViewCell {
             collection.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
+    
+    func configure(text: String, data: [HomeDataProtocol]) {
+        self.titleText.text = text
+        self.data = data
+    }
 }
 
-extension HeaderSectionCell: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension HomeSectionCell: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        20
+        data.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(ImageLabelCell.self)", for: indexPath) as! ImageLabelCell
+        cell.configure(model: data[indexPath.row])
         return cell
     }
     

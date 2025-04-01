@@ -35,15 +35,14 @@ class HomeController: BaseController {
     
     private lazy var collection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 1
         let c = UICollectionView(frame: .zero, collectionViewLayout: layout)
         c.backgroundColor = .clear
-        c.showsVerticalScrollIndicator = false
         c.dataSource = self
         c.delegate = self
-        c.register(HeaderView.self,
-                   forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                   withReuseIdentifier: "\(HeaderView.self)")
-        c.register(HomePlaylistCell.self, forCellWithReuseIdentifier: "\(HomePlaylistCell.self)")
+        c.showsVerticalScrollIndicator = false
+        c.register(HomeSectionCell.self, forCellWithReuseIdentifier: "\(HomeSectionCell.self)")
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
@@ -58,7 +57,7 @@ class HomeController: BaseController {
     //    MARK: - Properties
     
     private let viewModel: HomeViewModel
-    private let items: [String] = ["All", "Albums", "Playlists"]
+    private let items: [String] = ["All", "Albums", "Tracks"]
     
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
@@ -74,7 +73,7 @@ class HomeController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getCurrentUser()
+        viewModel.getAllData()
     }
     
     override func setupUI() {
@@ -100,7 +99,7 @@ class HomeController: BaseController {
             collection.topAnchor.constraint(equalTo: userImage.bottomAnchor, constant: 20),
             collection.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collection.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -113,6 +112,7 @@ class HomeController: BaseController {
                 self?.indicatorview.stopAnimating()
             case .success:
                 self?.configureUserInfo()
+                self?.collection.reloadData()
             case .error(let error):
                 self?.showAlert(message: error)
             case .idle:
@@ -134,23 +134,18 @@ class HomeController: BaseController {
 
 extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        4
+        viewModel.data.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(HomePlaylistCell.self)", for: indexPath) as!
-        HomePlaylistCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(HomeSectionCell.self)", for: indexPath) as!
+        HomeSectionCell
+        cell.configure(text: viewModel.data[indexPath.item].title.rawValue,
+                       data: viewModel.data[indexPath.item].items)
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                     withReuseIdentifier: "\(HeaderView.self)",
-                                                                     for: indexPath) as! HeaderView
-        return header
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        .init(width: collectionView.frame.width, height: 750)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        .init(width: collectionView.frame.width, height: 250)
     }
 }
