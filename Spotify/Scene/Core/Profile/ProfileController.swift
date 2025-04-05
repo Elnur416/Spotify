@@ -169,7 +169,6 @@ class ProfileController: BaseController {
     }
     
     override func setupUI() {
-        title = "Profile"
         setupGradientLayer()
         [indicatorview,
          image,
@@ -194,7 +193,7 @@ class ProfileController: BaseController {
     
     override func setupConstraints() {
         NSLayoutConstraint.activate([
-            image.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 28),
+            image.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             image.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
             image.widthAnchor.constraint(equalToConstant: 100),
             image.heightAnchor.constraint(equalToConstant: 100),
@@ -281,7 +280,19 @@ class ProfileController: BaseController {
     }
     
     @objc private func showOptions() {
-        
+        guard let user = viewModel.user else { return }
+        let controller = SettingsController(viewModel: .init(user: user))
+        let navController = UINavigationController(rootViewController: controller)
+
+        if let sheet = navController.sheetPresentationController {
+            sheet.detents = [
+                .custom { _ in return 200 }
+            ]
+            sheet.prefersGrabberVisible = true 
+            sheet.preferredCornerRadius = 20
+        }
+
+        present(navController, animated: true)
     }
     
 //    MARK: - Configure user info

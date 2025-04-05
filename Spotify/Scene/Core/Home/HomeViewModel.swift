@@ -13,14 +13,22 @@ enum DataTitle: String {
     case artists = "Your Top Artists"
 }
 
+enum HomeDataType {
+    case artist
+    case track
+    case album
+}
+
 struct DataType {
-    let title: DataTitle
-    let items: [HomeDataProtocol]
+    let title: DataTitle?
+    let items: [HomeDataProtocol]?
+    let type: HomeDataType?
 }
 
 final class HomeViewModel {
     private(set) var user: UserProfile?
     private(set) var data = [DataType]()
+    private(set) var recentlyPlayed = [RecentItem]()
     private let userUseCase: UserUseCase
     private let homeUseCase: HomeUseCase
     
@@ -47,9 +55,10 @@ final class HomeViewModel {
     
     func getAllData() {
         getCurrentUser()
+        getRecentlyPlayed()
         getNewReleases()
-        getTopArtists()
         getTopTracks()
+        getTopArtists()
     }
     
     private func getCurrentUser() {
@@ -70,7 +79,9 @@ final class HomeViewModel {
         homeUseCase.getNewRelease { data, error in
             if let data {
                 guard let items = data.albums?.items else { return }
-                let item: [DataType] = [.init(title: .newRelease, items: items)]
+                let item: [DataType] = [.init(title: .newRelease,
+                                              items: items,
+                                              type: .album)]
                 self.data.append(contentsOf: item)
                 self.state = .loaded
                 self.state = .success
@@ -85,7 +96,9 @@ final class HomeViewModel {
         homeUseCase.getTopArtists { data, error in
             if let data {
                 guard let items = data.items else { return }
-                let item: [DataType] = [.init(title: .artists, items: items)]
+                let item: [DataType] = [.init(title: .artists,
+                                              items: items,
+                                              type: .artist)]
                 self.data.append(contentsOf: item)
                 self.state = .loaded
                 self.state = .success
@@ -100,8 +113,24 @@ final class HomeViewModel {
         homeUseCase.getTopTracks { data, error in
             if let data {
                 guard let items = data.items else { return }
-                let item: [DataType] = [.init(title: .tracks, items: items)]
+                let item: [DataType] = [.init(title: .tracks,
+                                              items: items,
+                                              type: .track)]
                 self.data.append(contentsOf: item)
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    private func getRecentlyPlayed() {
+        self.state = .loading
+        homeUseCase.getRecentlyTracks { data, error in
+            if let data {
+                guard let items = data.items else { return }
+                self.recentlyPlayed = items
                 self.state = .loaded
                 self.state = .success
             } else if let error {

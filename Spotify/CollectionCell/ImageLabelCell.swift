@@ -60,7 +60,11 @@ class ImageLabelCell: UICollectionViewCell {
         ])
     }
     
-    func configure(model: HomeDataProtocol) {
+    func configure(model: HomeDataProtocol, type: HomeDataType) {
+        if type == .artist {
+            image.layer.cornerRadius = 75
+            name.textAlignment = .center
+        }
         load(image: image, url: model.imageURL)
         name.text = model.nameText
     }

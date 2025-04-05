@@ -37,7 +37,7 @@ class HomeSectionCell: UICollectionViewCell {
     
 //    MARK: - Properties
     
-    var data = [HomeDataProtocol]()
+    var data: DataType?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -69,7 +69,7 @@ class HomeSectionCell: UICollectionViewCell {
         ])
     }
     
-    func configure(text: String, data: [HomeDataProtocol]) {
+    func configure(text: String, data: DataType) {
         self.titleText.text = text
         self.data = data
     }
@@ -77,12 +77,15 @@ class HomeSectionCell: UICollectionViewCell {
 
 extension HomeSectionCell: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        data.count
+        data?.items?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(ImageLabelCell.self)", for: indexPath) as! ImageLabelCell
-        cell.configure(model: data[indexPath.row])
+        if let items = data?.items?[indexPath.item], let type = data?.type {
+            cell.configure(model: items,
+                           type: type)
+        }
         return cell
     }
     

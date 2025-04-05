@@ -9,28 +9,23 @@ import Foundation
 
 // MARK: - RecentlyTracks
 struct RecentlyTracks: Codable {
-    let href: String?
-    let limit: Int?
+    let items: [RecentItem]?
     let next: String?
-    let cursors: Cursors?
-    let total: Int?
-    let items: [RecentlyTrackItem]?
+    let cursors: Cursors2?
+    let limit: Int?
+    let href: String?
+}
+
+// MARK: - Cursors
+struct Cursors2: Codable {
+    let after, before: String?
 }
 
 // MARK: - Item
-struct RecentlyTrackItem: Codable, HomeDataProtocol {
+struct RecentItem: Codable {
     let track: Track2?
     let playedAt: String?
     let context: Context?
-    
-    var nameText: String {
-        ""
-    }
-    
-    var imageURL: String {
-        ""
-    }
-
 
     enum CodingKeys: String, CodingKey {
         case track
@@ -41,37 +36,41 @@ struct RecentlyTrackItem: Codable, HomeDataProtocol {
 
 // MARK: - Context
 struct Context: Codable {
-    let type, href: String?
-    let externalUrls: ExternalUrls?
-    let uri: String?
+    let href: String?
+    let externalUrls: ExternalUrls2?
+    let type, uri: String?
 
     enum CodingKeys: String, CodingKey {
-        case type, href
+        case href
         case externalUrls = "external_urls"
-        case uri
+        case type, uri
     }
+}
+
+// MARK: - ExternalUrls
+struct ExternalUrls2: Codable {
+    let spotify: String?
 }
 
 // MARK: - Track
 struct Track2: Codable {
-    let album: Album?
+    let album: Album2?
     let artists: [Artist]?
     let availableMarkets: [String]?
     let discNumber, durationMS: Int?
     let explicit: Bool?
     let externalIDS: ExternalIDS?
     let externalUrls: ExternalUrls?
-    let href, id: String?
-    let isPlayable: Bool?
-    let linkedFrom: LinkedFrom?
-    let restrictions: Restrictions?
+    let href: String?
+    let id: String?
+    let isLocal: Bool?
     let name: String?
     let popularity: Int?
     let previewURL: String?
     let trackNumber: Int?
-    let type, uri: String?
-    let isLocal: Bool?
-    
+    let type: TrackType?
+    let uri: String?
+
     enum CodingKeys: String, CodingKey {
         case album, artists
         case availableMarkets = "available_markets"
@@ -81,46 +80,77 @@ struct Track2: Codable {
         case externalIDS = "external_ids"
         case externalUrls = "external_urls"
         case href, id
-        case isPlayable = "is_playable"
-        case linkedFrom = "linked_from"
-        case restrictions, name, popularity
+        case isLocal = "is_local"
+        case name, popularity
         case previewURL = "preview_url"
         case trackNumber = "track_number"
         case type, uri
-        case isLocal = "is_local"
     }
 }
 
 // MARK: - Album
-struct Album: Codable {
-    let albumType: String?
-    let totalTracks: Int?
+struct Album2: Codable {
+    let albumType: AlbumTypeEnum?
+    let artists: [Artist]?
     let availableMarkets: [String]?
     let externalUrls: ExternalUrls?
-    let href, id: String?
-    let images: [Image]?
-    let name, releaseDate, releaseDatePrecision: String?
-    let restrictions: Restrictions?
-    let type, uri: String?
-    let artists: [ArtistInfo]?
+    let href: String?
+    let id: String?
+    let images: [Image2]?
+    let name, releaseDate: String?
+    let releaseDatePrecision: String?
+    let totalTracks: Int?
+    let type: AlbumTypeEnum?
+    let uri: String?
 
     enum CodingKeys: String, CodingKey {
         case albumType = "album_type"
-        case totalTracks = "total_tracks"
+        case artists
         case availableMarkets = "available_markets"
         case externalUrls = "external_urls"
         case href, id, images, name
         case releaseDate = "release_date"
         case releaseDatePrecision = "release_date_precision"
-        case restrictions, type, uri, artists
+        case totalTracks = "total_tracks"
+        case type, uri
     }
+}
+
+enum AlbumTypeEnum: String, Codable {
+    case album = "album"
+    case single = "single"
+}
+
+// MARK: - Artist
+struct Artist2: Codable {
+    let externalUrls: ExternalUrls?
+    let href: String?
+    let id, name: String?
+    let type: ArtistType?
+    let uri: String?
+
+    enum CodingKeys: String, CodingKey {
+        case externalUrls = "external_urls"
+        case href, id, name, type, uri
+    }
+}
+
+enum ArtistType: String, Codable {
+    case artist = "artist"
+}
+
+// MARK: - Image
+struct Image2: Codable {
+    let height: Int?
+    let url: String?
+    let width: Int?
 }
 
 // MARK: - ExternalIDS
 struct ExternalIDS: Codable {
-    let isrc, ean, upc: String?
+    let isrc: String?
 }
 
-// MARK: - LinkedFrom
-struct LinkedFrom: Codable {
+enum TrackType: String, Codable {
+    case track = "track"
 }

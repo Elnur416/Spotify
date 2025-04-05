@@ -43,6 +43,7 @@ class HomeController: BaseController {
         c.delegate = self
         c.showsVerticalScrollIndicator = false
         c.register(HomeSectionCell.self, forCellWithReuseIdentifier: "\(HomeSectionCell.self)")
+        c.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "\(HeaderView.self)")
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
@@ -140,9 +141,21 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(HomeSectionCell.self)", for: indexPath) as!
         HomeSectionCell
-        cell.configure(text: viewModel.data[indexPath.item].title.rawValue,
-                       data: viewModel.data[indexPath.item].items)
+        cell.configure(text: viewModel.data[indexPath.item].title?.rawValue ?? "",
+                       data: viewModel.data[indexPath.item])
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+                                                                     withReuseIdentifier: "\(HeaderView.self)",
+                                                                     for: indexPath) as! HeaderView
+        header.configure(data: viewModel.recentlyPlayed)
+        return header
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        .init(width: collectionView.frame.width, height: 280)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
