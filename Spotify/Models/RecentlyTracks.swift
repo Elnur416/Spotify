@@ -135,10 +135,6 @@ struct Artist2: Codable {
     }
 }
 
-enum ArtistType: String, Codable {
-    case artist = "artist"
-}
-
 // MARK: - Image
 struct Image2: Codable {
     let height: Int?
