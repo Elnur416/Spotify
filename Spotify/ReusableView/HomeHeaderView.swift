@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HeaderView: UICollectionReusableView {
+class HomeHeaderView: UICollectionReusableView {
     
 //    MARK: UI elements
     
@@ -75,7 +75,7 @@ class HeaderView: UICollectionReusableView {
     }
 }
 
-extension HeaderView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension HomeHeaderView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         items.count
     }

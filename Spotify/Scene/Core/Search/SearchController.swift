@@ -65,7 +65,7 @@ class SearchController: BaseController {
         navigationItem.searchController = searchController
         searchController.searchResultsUpdater = self
         [indicatorview,
-         collection].forEach(view.addSubview)
+         collection].forEach { view.addSubview($0) }
         indicatorview.frame = view.bounds
     }
     
@@ -116,7 +116,8 @@ extension SearchController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let resultsController = searchController.searchResultsController as? SearchResultsController,
               let query = searchController.searchBar.text else { return }
-        print(query)
         viewModel.getSearchResults(query: query)
+        guard let data = viewModel.searchResults else { return }
+        resultsController.updateData(items: data)
     }
 }

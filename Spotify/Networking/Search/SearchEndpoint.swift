@@ -16,7 +16,7 @@ enum SearchEndpoint {
         case .category:
             return NetworkHelper.shared.configureURL(endpoint: "/browse/categories")
         case .search(let text):
-            return NetworkHelper.shared.configureURL(endpoint: "/search?q=\(text)&type=album%2Cartist%2Ctrack%2Cplaylist")
+            return NetworkHelper.shared.configureURL(endpoint: "/search?q=\(text)&type=artist%2Ctrack")
         }
     }
 }

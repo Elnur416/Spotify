@@ -30,7 +30,7 @@ struct Cursors: Codable {
 }
 
 // MARK: - Item
-struct ArtistInfo: Codable, HomeDataProtocol {
+struct ArtistInfo: Codable, HomeDataProtocol, SearchDataProtocol {
     let externalUrls: ExternalUrls?
     let followers: Followers?
     let genres: [String]?
@@ -46,6 +46,14 @@ struct ArtistInfo: Codable, HomeDataProtocol {
     
     var imageURL: String {
         images?.first?.url ?? ""
+    }
+    
+    var titleName: String {
+        name ?? ""
+    }
+    
+    var followersCount: Int {
+        followers?.total ?? 0
     }
 
 

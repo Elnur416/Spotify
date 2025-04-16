@@ -126,7 +126,7 @@ struct Artist2: Codable {
     let externalUrls: ExternalUrls?
     let href: String?
     let id, name: String?
-    let type: ArtistType?
+    let type: String?
     let uri: String?
 
     enum CodingKeys: String, CodingKey {

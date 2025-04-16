@@ -63,7 +63,7 @@ extension FollowingArtistsController: UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "\(ArtistCell.self)", for: indexPath) as! ArtistCell
-        cell.configure(model: viewModel.artists[indexPath.item])
+        cell.configure(model: viewModel.artists[indexPath.item], type: .profile)
         return cell
     }
     

@@ -14,7 +14,7 @@ class CategoryCell: UICollectionViewCell {
     private lazy var alphaView: UIView = {
         let v = UIView()
         v.backgroundColor = .black
-        v.alpha = 0.3
+        v.alpha = 0.5
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()

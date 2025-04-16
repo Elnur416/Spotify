@@ -10,6 +10,7 @@ import Foundation
 final class SearchViewModel {
     private var useCase: SearchUseCase
     private(set) var categories = [CategoryItem]()
+    private(set) var searchResults: SearchResults?
     
     init(useCase: SearchUseCase) {
         self.useCase = useCase
@@ -35,7 +36,7 @@ final class SearchViewModel {
         self.state = .loading
         useCase.search(query: query) { data, error in
             if let data {
-                print(data)
+                self.searchResults = data
                 self.state = .loaded
                 self.state = .success
             } else if let error {

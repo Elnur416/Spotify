@@ -7,6 +7,11 @@
 
 import UIKit
 
+enum CellDataType {
+    case search
+    case profile
+}
+
 class ArtistCell: UITableViewCell {
     
 //    MARK: UI elements
@@ -25,7 +30,7 @@ class ArtistCell: UITableViewCell {
         l.font = .systemFont(ofSize: 17, weight: .medium)
         l.textColor = .white
         l.textAlignment = .left
-        l.numberOfLines = 0
+        l.numberOfLines = 2
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
     }()
@@ -109,9 +114,12 @@ class ArtistCell: UITableViewCell {
         icon.tintColor = color
     }
     
-    func configure(model: ArtistInfo) {
-        load(image: image, url: "\(model.images?.first?.url ?? "")")
-        name.text = model.name
-        followers.text = "\(model.followers?.total ?? 0) followers"
+    func configure(model: SearchDataProtocol, type: CellDataType) {
+        load(image: image, url: "\(model.imageURL)")
+        name.text = model.titleName
+        followers.text = "\(model.followersCount) followers"
+        if type == .search {
+            icon.isHidden = true
+        }
     }
 }

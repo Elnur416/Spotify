@@ -43,7 +43,7 @@ class HomeController: BaseController {
         c.delegate = self
         c.showsVerticalScrollIndicator = false
         c.register(HomeSectionCell.self, forCellWithReuseIdentifier: "\(HomeSectionCell.self)")
-        c.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "\(HeaderView.self)")
+        c.register(HomeHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "\(HomeHeaderView.self)")
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
     }()
@@ -148,8 +148,8 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, 
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                     withReuseIdentifier: "\(HeaderView.self)",
-                                                                     for: indexPath) as! HeaderView
+                                                                     withReuseIdentifier: "\(HomeHeaderView.self)",
+                                                                     for: indexPath) as! HomeHeaderView
         header.configure(data: viewModel.recentlyPlayed)
         return header
     }
