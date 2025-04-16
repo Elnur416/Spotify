@@ -11,7 +11,7 @@ class TabbarController: UITabBarController {
     
     private let vc1 = UINavigationController(rootViewController: HomeController(viewModel: .init(userUseCase: UserManager(), homeUseCase: HomeManager())))
     private let vc2 = UINavigationController(rootViewController: SearchController(viewModel: .init(useCase: SearchManager())))
-    private let vc3 = UINavigationController(rootViewController: LibraryController())
+    private let vc3 = UINavigationController(rootViewController: LibraryController(viewMOdel: .init(useCase: LibraryManager())))
     private let vc4 = UINavigationController(rootViewController: ProfileController(viewModel: .init(useCase: UserManager())))
 
     override func viewDidLoad() {

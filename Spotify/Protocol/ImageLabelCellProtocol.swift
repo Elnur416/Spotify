@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol HomeDataProtocol {
+protocol ImageLabelCellProtocol {
     var nameText: String { get }
     var imageURL: String { get }
 }

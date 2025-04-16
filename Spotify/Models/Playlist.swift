@@ -19,7 +19,7 @@ struct Playlists: Codable {
 }
 
 // MARK: - Item
-struct PlaylistItem: Codable {
+struct PlaylistItem: Codable, ImageLabelCellProtocol {
     let collaborative: Bool?
     let description: String?
     let externalUrls: ExternalUrls?
@@ -31,6 +31,14 @@ struct PlaylistItem: Codable {
     let snapshotID: String?
     let tracks: Track?
     let type, uri: String?
+    
+    var nameText: String {
+        name ?? ""
+    }
+    
+    var imageURL: String {
+        images?.first?.url ?? ""
+    }
 
     enum CodingKeys: String, CodingKey {
         case collaborative, description

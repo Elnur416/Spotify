@@ -21,7 +21,7 @@ enum HomeDataType {
 
 struct DataType {
     let title: DataTitle?
-    let items: [HomeDataProtocol]?
+    let items: [ImageLabelCellProtocol]?
     let type: HomeDataType?
 }
 

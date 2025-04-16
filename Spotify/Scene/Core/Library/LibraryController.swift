@@ -9,6 +9,19 @@ import UIKit
 
 class LibraryController: BaseController {
     
+    private let viewModel: LibraryViewModel
+    
+    init(viewMOdel: LibraryViewModel) {
+        self.viewModel = viewMOdel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+//    MARK: UI elements
+    
     private lazy var collection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 60
@@ -33,11 +46,13 @@ class LibraryController: BaseController {
         view.color = .gray
         return view
     }()
+    
+//    MARK: - Life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        viewModel.getAllData()
     }
     
     override func setupUI() {
@@ -57,15 +72,43 @@ class LibraryController: BaseController {
             collection.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
+    
+    override func configureViewModel() {
+        viewModel.stateUpdated = { state in
+            switch state {
+            case .loading:
+                self.indicatorview.startAnimating()
+            case .loaded:
+                self.indicatorview.stopAnimating()
+            case .success:
+                self.collection.reloadData()
+            case .error(let error):
+                self.showAlert(message: error)
+            case .idle:
+                break
+            }
+        }
+    }
 }
 
 extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        10
+        if viewModel.section == .playlists {
+            return viewModel.playlists.count
+        } else {
+            return viewModel.albums.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(ImageLabelCell.self)", for: indexPath) as! ImageLabelCell
+        if viewModel.section == .playlists {
+            cell.configure(model: viewModel.playlists[indexPath.item],
+                           type: .album)
+        } else {
+            cell.configure(model: viewModel.albums[indexPath.item],
+                           type: .album)
+        }
         return cell
     }
     
@@ -73,6 +116,10 @@ extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegat
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
                                                                      withReuseIdentifier: "\(LibraryHeaderView.self)",
                                                                      for: indexPath) as! LibraryHeaderView
+        header.sectionCallBack = { [weak self] title in
+            self?.viewModel.section = title
+            self?.collection.reloadData()
+        }
         return header
     }
     

@@ -16,7 +16,7 @@ struct Tracks: Codable {
 }
 
 // MARK: - Item
-struct TrackItem: Codable, HomeDataProtocol {
+struct TrackItem: Codable, ImageLabelCellProtocol {
     let album: Album?
     let artists: [Artist3]?
     let availableMarkets: [String]?

@@ -30,7 +30,7 @@ struct Cursors: Codable {
 }
 
 // MARK: - Item
-struct ArtistInfo: Codable, HomeDataProtocol, SearchDataProtocol {
+struct ArtistInfo: Codable, ImageLabelCellProtocol, SearchDataProtocol {
     let externalUrls: ExternalUrls?
     let followers: Followers?
     let genres: [String]?

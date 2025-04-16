@@ -30,7 +30,7 @@ class ArtistCell: UITableViewCell {
         l.font = .systemFont(ofSize: 17, weight: .medium)
         l.textColor = .white
         l.textAlignment = .left
-        l.numberOfLines = 2
+        l.numberOfLines = 1
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
     }()

@@ -47,9 +47,10 @@ class LibraryHeaderView: UICollectionReusableView {
     }()
     
 //    MARK: - Properties
+    var sectionCallBack: ((LibrarySectionNames) -> Void)?
     
-    private var sectionModels: [LibrarySectionModel] = [.init(name: .albums, isSelected: true),
-                                                        .init(name: .playlists, isSelected: false)]
+    private var sectionModels: [LibrarySectionModel] = [.init(name: .playlists, isSelected: true),
+                                                        .init(name: .albums, isSelected: false)]
     
     
     override init(frame: CGRect) {
@@ -104,5 +105,6 @@ extension LibraryHeaderView: UICollectionViewDataSource, UICollectionViewDelegat
             sectionModels[index].isSelected = index == indexPath.item ? true : false
         }
         collection.reloadData()
+        self.sectionCallBack?(sectionModels[indexPath.item].name)
     }
 }
