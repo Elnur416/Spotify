@@ -130,4 +130,16 @@ extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         .init(width: 150, height: 150)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if viewModel.section == .playlists {
+            let coordinator = PlaylistCoordinator(navigationController: navigationController ?? UINavigationController(),
+                                                  id: viewModel.playlists[indexPath.item].id ?? "")
+            coordinator.start()
+        } else {
+            let coordinator = AlbumCoordinator(navigationController: self.navigationController ?? UINavigationController(),
+                                               id: viewModel.albums[indexPath.item].album?.id ?? "")
+            coordinator.start()
+        }
+    }
 }

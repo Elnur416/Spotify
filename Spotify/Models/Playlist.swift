@@ -39,6 +39,10 @@ struct PlaylistItem: Codable, ImageLabelCellProtocol {
     var imageURL: String {
         images?.first?.url ?? ""
     }
+    
+    var itemId: String {
+        id ?? ""
+    }
 
     enum CodingKeys: String, CodingKey {
         case collaborative, description

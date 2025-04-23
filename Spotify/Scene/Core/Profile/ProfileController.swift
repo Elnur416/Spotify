@@ -260,15 +260,6 @@ class ProfileController: BaseController {
         }
     }
     
-    private func setupGradientLayer() {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = view.bounds
-        gradientLayer.colors = [UIColor.gradient.cgColor, UIColor.black.cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
-        view.layer.addSublayer(gradientLayer)
-    }
-    
     @objc private func showFollowingArtists() {
         let controller = FollowingArtistsController(viewModel: .init(artists: viewModel.artists))
         navigationController?.show(controller, sender: nil)
@@ -321,5 +312,11 @@ extension ProfileController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         UITableView.automaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let coordinator = PlaylistCoordinator(navigationController: self.navigationController ?? UINavigationController(),
+                                              id: viewModel.playlists[indexPath.item].id ?? "")
+        coordinator.start()
     }
 }

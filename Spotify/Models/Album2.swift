@@ -1,48 +1,14 @@
 //
-//  kaecfa.swift
+//  Album2.swift
 //  Spotify
 //
-//  Created by Elnur Mammadov on 16.04.25.
+//  Created by Elnur Mammadov on 18.04.25.
 //
 
 import Foundation
 
-// MARK: - Albums
-struct Albums2: Codable {
-    let href: String?
-    let items: [AlbumsItem]?
-    let limit: Int?
-    let next: String?
-    let offset: Int?
-    let previous: String?
-    let total: Int?
-}
-
-// MARK: - AlbumsItem
-struct AlbumsItem: Codable, ImageLabelCellProtocol {
-    let addedAt: String?
-    let album: Album5?
-    
-    var nameText: String {
-        album?.name ?? ""
-    }
-    
-    var imageURL: String {
-        album?.images?.first?.url ?? ""
-    }
-    
-    var itemId: String {
-        album?.id ?? ""
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case addedAt = "added_at"
-        case album
-    }
-}
-
-// MARK: - Album
-struct Album5: Codable {
+// MARK: - Playlist
+struct Album6: Codable, HeaderProtocol {
     let albumType: String?
     let totalTracks: Int?
     let availableMarkets: [String]?
@@ -52,13 +18,29 @@ struct Album5: Codable {
     let images: [Image]?
     let name, releaseDate, releaseDatePrecision, type: String?
     let uri: String?
-    let artists: [Artist5]?
-    let tracks: Tracks3?
+    let artists: [Artist]?
+    let tracks: Tracks5?
     let copyrights: [Copyright]?
-    let externalIDS: [String: String]?
+    let externalIDS: ExternalIDS2?
     let genres: [String]?
     let label: String?
     let popularity: Int?
+    
+    var mainImage: String {
+        images?.first?.url ?? ""
+    }
+    
+    var titleName: String {
+        name ?? ""
+    }
+    
+    var ownerName: String {
+        artists?.first?.name ?? ""
+    }
+    
+    var totalTracksCount: Int {
+        tracks?.items?.count ?? 0
+    }
 
     enum CodingKeys: String, CodingKey {
         case albumType = "album_type"
@@ -74,51 +56,25 @@ struct Album5: Codable {
     }
 }
 
-// MARK: - Artist
-struct Artist5: Codable {
-    let externalUrls: ExternalUrls?
-    let href: String?
-    let id: String?
-    let name: Name?
-    let type: ArtistType?
-    let uri: String?
-
-    enum CodingKeys: String, CodingKey {
-        case externalUrls = "external_urls"
-        case href, id, name, type, uri
-    }
-}
-
-enum Name: String, Codable {
-    case mcFabinhoDaOsk = "MC Fabinho da Osk"
-    case nxght = "NXGHT!"
-    case scythermane = "Scythermane"
-    case sıfırKM = "Sıfır Km"
-}
-
-enum ArtistType: String, Codable {
-    case artist = "artist"
-}
-
-// MARK: - Copyright
-struct Copyright: Codable {
-    let text, type: String?
+// MARK: - ExternalIDS
+struct ExternalIDS2: Codable {
+    let upc: String?
 }
 
 // MARK: - Tracks
-struct Tracks3: Codable {
+struct Tracks5: Codable {
     let href: String?
     let limit: Int?
     let next: String?
     let offset: Int?
     let previous: String?
     let total: Int?
-    let items: [TracksItem2]?
+    let items: [Item2]?
 }
 
-// MARK: - TracksItem
-struct TracksItem2: Codable {
-    let artists: [Artist5]?
+// MARK: - Item
+struct Item2: Codable {
+    let artists: [Artist]?
     let availableMarkets: [String]?
     let discNumber, durationMS: Int?
     let explicit: Bool?
@@ -127,10 +83,9 @@ struct TracksItem2: Codable {
     let id, name: String?
     let previewURL: String?
     let trackNumber: Int?
-    let type: ItemType?
-    let uri: String?
+    let type, uri: String?
     let isLocal: Bool?
-
+    
     enum CodingKeys: String, CodingKey {
         case artists
         case availableMarkets = "available_markets"
@@ -144,8 +99,4 @@ struct TracksItem2: Codable {
         case type, uri
         case isLocal = "is_local"
     }
-}
-
-enum ItemType: String, Codable {
-    case track = "track"
 }

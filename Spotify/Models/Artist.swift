@@ -55,6 +55,10 @@ struct ArtistInfo: Codable, ImageLabelCellProtocol, SearchDataProtocol {
     var followersCount: Int {
         followers?.total ?? 0
     }
+    
+    var itemId: String {
+        id ?? ""
+    }
 
 
     enum CodingKeys: String, CodingKey {

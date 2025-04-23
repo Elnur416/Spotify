@@ -72,4 +72,10 @@ extension PlaylistsListController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         UITableView.automaticDimension
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let coordinator = PlaylistCoordinator(navigationController: self.navigationController ?? UINavigationController(),
+                                              id: viewModel.playLists[indexPath.item].id ?? "")
+        coordinator.start()
+    }
 }

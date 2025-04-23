@@ -42,6 +42,10 @@ struct TrackItem: Codable, ImageLabelCellProtocol {
     var imageURL: String {
         album?.images?.first?.url ?? ""
     }
+    
+    var itemId: String {
+        id ?? ""
+    }
 
     enum CodingKeys: String, CodingKey {
         case album, artists

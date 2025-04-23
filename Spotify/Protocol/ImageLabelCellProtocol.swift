@@ -10,4 +10,5 @@ import Foundation
 protocol ImageLabelCellProtocol {
     var nameText: String { get }
     var imageURL: String { get }
+    var itemId: String { get }
 }

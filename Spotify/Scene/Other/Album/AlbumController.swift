@@ -1,14 +1,14 @@
 //
-//  PlaylistController.swift
+//  AlbumController.swift
 //  Spotify
 //
-//  Created by Elnur Mammadov on 18.03.25.
+//  Created by Elnur Mammadov on 18.04.25.
 //
 
 import UIKit
 
-class PlaylistController: BaseController {
-    
+class AlbumController: BaseController {
+
 //    MARK: UI elements
     
     private lazy var backButton: UIButton = {
@@ -25,7 +25,7 @@ class PlaylistController: BaseController {
        let t = UITableView()
         t.showsVerticalScrollIndicator = false
         t.backgroundColor = .clear
-        t.register(TrackInPlaylistCell.self, forCellReuseIdentifier: "\(TrackInPlaylistCell.self)")
+        t.register(TrackInAlbumCell.self, forCellReuseIdentifier: "\(TrackInAlbumCell.self)")
         t.dataSource = self
         t.delegate = self
         t.translatesAutoresizingMaskIntoConstraints = false
@@ -41,9 +41,9 @@ class PlaylistController: BaseController {
     
 //    MARK: - Properties
     
-    private let viewModel: PlaylistViewModel
+    private let viewModel: AlbumViewModel
     
-    init(viewModel: PlaylistViewModel) {
+    init(viewModel: AlbumViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -56,8 +56,8 @@ class PlaylistController: BaseController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        viewModel.getPlaylist()
+
+        viewModel.getAlbum()
         configureHeaderView()
     }
     
@@ -108,9 +108,9 @@ class PlaylistController: BaseController {
     }
     
     private func configureData() {
-        guard let data = viewModel.playlist,
+        guard let data = viewModel.album,
         let header = table.tableHeaderView as? TableHeaderView else { return }
-        header.configure(model: data, type: .playlist)
+        header.configure(model: data, type: .album)
     }
     
     @objc private func backAction() {
@@ -119,14 +119,14 @@ class PlaylistController: BaseController {
     }
 }
 
-extension PlaylistController: UITableViewDataSource, UITableViewDelegate {
+extension AlbumController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        Int(viewModel.playlist?.tracks?.total ?? 0)
+        viewModel.album?.tracks?.items?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "\(TrackInPlaylistCell.self)") as! TrackInPlaylistCell
-        guard let data = viewModel.playlist?.tracks?.items?[indexPath.item].track else { return cell }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "\(TrackInAlbumCell.self)") as! TrackInAlbumCell
+        guard let data = viewModel.album?.tracks?.items?[indexPath.item] else { return cell }
         cell.configure(model: data)
         return cell
     }
@@ -135,3 +135,4 @@ extension PlaylistController: UITableViewDataSource, UITableViewDelegate {
         66
     }
 }
+

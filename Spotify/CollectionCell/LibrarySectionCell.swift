@@ -12,7 +12,7 @@ class LibrarySectionCell: UICollectionViewCell {
     private lazy var titleText: UILabel = {
         let t = UILabel()
         t.textColor = .white
-        t.font = .systemFont(ofSize: 14, weight: .regular)
+        t.font = .systemFont(ofSize: 14, weight: .medium)
         t.textAlignment = .center
         t.text = "Playlists"
         t.translatesAutoresizingMaskIntoConstraints = false

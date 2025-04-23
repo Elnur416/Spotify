@@ -38,6 +38,7 @@ class HomeSectionCell: UICollectionViewCell {
 //    MARK: - Properties
     
     var data: DataType?
+    var indexCallBack: ((HomeDataType, String) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -91,5 +92,15 @@ extension HomeSectionCell: UICollectionViewDataSource, UICollectionViewDelegate,
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         .init(width: 150, height: collectionView.frame.height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if data?.type == .album {
+            let id = data?.items?[indexPath.item].itemId ?? ""
+            indexCallBack?(.album, id)
+        } else if data?.type == .artist {
+            let id = data?.items?[indexPath.item].itemId ?? ""
+            indexCallBack?(.artist, id)
+        }
     }
 }

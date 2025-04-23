@@ -143,6 +143,17 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, 
         HomeSectionCell
         cell.configure(text: viewModel.data[indexPath.item].title?.rawValue ?? "",
                        data: viewModel.data[indexPath.item])
+        cell.indexCallBack = { [weak self] type, id in
+            if type == .album {
+                let coordinator = AlbumCoordinator(navigationController: self?.navigationController ?? UINavigationController(),
+                                                   id: id)
+                coordinator.start()
+            } else if type == .artist {
+                let coordinator = ArtistCoordinator(navigationController: self?.navigationController ?? UINavigationController(),
+                                                    actorID: id)
+                coordinator.start()
+            }
+        }
         return cell
     }
     
