@@ -16,5 +16,12 @@ final class ArtistManager: ArtistUseCase {
                         model: ArtistInfo.self,
                         completion: completion)
     }
+    
+    func getArtistTopTracks(id: String, completion: @escaping ((ArtistTopTracks?, String?) -> Void)) {
+        let path = ArtistEndpoint.topTracks(id: id).path
+        manager.request(path: path,
+                        model: ArtistTopTracks.self,
+                        completion: completion)
+    }
 }
 

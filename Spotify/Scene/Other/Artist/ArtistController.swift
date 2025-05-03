@@ -22,6 +22,16 @@ class ArtistController: BaseController {
         return t
     }()
     
+    private lazy var backButton: UIButton = {
+        let b = UIButton(type: .custom)
+        b.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
+        b.tintColor = .white
+        b.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        b.backgroundColor = .clear
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }()
+    
     private lazy var indicatorview: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .large)
         view.style = .medium
@@ -32,6 +42,7 @@ class ArtistController: BaseController {
 //    MARK: - Properties
     
     private let viewModel: ArtistViewModel
+    private var alpha = CGFloat(1)
     
     init(viewModel: ArtistViewModel) {
         self.viewModel = viewModel
@@ -48,22 +59,30 @@ class ArtistController: BaseController {
         super.viewDidLoad()
         
         viewModel.getArtistInfo()
+        viewModel.getArtistToptracks()
         configureTableHeader()
     }
     
     override func setupUI() {
         setupGradientLayer()
+        navigationController?.navigationBar.isHidden = true
         [indicatorview,
-         table].forEach { view.addSubview($0) }
+         table,
+         backButton].forEach { view.addSubview($0) }
         indicatorview.frame = view.bounds
     }
     
     override func setupConstraints() {
         NSLayoutConstraint.activate([
-            table.topAnchor.constraint(equalTo: view.topAnchor),
-            table.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            table.topAnchor.constraint(equalTo: view.topAnchor, constant: -62),
+            table.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             table.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            table.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            table.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            backButton.widthAnchor.constraint(equalToConstant: 24),
+            backButton.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
     
@@ -95,15 +114,20 @@ class ArtistController: BaseController {
         let header = ArtistTableHeaderView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 370))
         table.tableHeaderView = header
     }
+    
+    @objc private func backAction() {
+        navigationController?.popViewController(animated: true)
+    }
 }
 
 extension ArtistController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        5
+        viewModel.artistTopTracks.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "\(TrackInAlbumCell.self)") as! TrackInAlbumCell
+        cell.configure(model: viewModel.artistTopTracks[indexPath.item])
         return cell
     }
     

@@ -101,6 +101,9 @@ extension HomeSectionCell: UICollectionViewDataSource, UICollectionViewDelegate,
         } else if data?.type == .artist {
             let id = data?.items?[indexPath.item].itemId ?? ""
             indexCallBack?(.artist, id)
+        } else if data?.type == .track {
+            let id = data?.items?[indexPath.item].itemId ?? ""
+            indexCallBack?(.track, id)
         }
     }
 }

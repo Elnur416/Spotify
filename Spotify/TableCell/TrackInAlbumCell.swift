@@ -86,8 +86,8 @@ class TrackInAlbumCell: UITableViewCell {
         addPlaylistButton.tintColor = color
     }
     
-    func configure(model: Item2) {
-        titleLabel.text = model.name
-        subLabel.text = model.artists?.first?.name
+    func configure(model: TrackProtocol) {
+        titleLabel.text = model.trackName
+        subLabel.text = model.subInfo
     }
 }

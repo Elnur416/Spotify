@@ -10,5 +10,5 @@ import Foundation
 protocol TrackProtocol {
     var mainImage: String { get }
     var trackName: String { get }
-    var artistName: String { get }
+    var subInfo: String { get }
 }

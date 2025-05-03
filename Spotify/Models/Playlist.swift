@@ -43,6 +43,13 @@ struct PlaylistItem: Codable, ImageLabelCellProtocol {
     var itemId: String {
         id ?? ""
     }
+    
+    var artistName: String {
+        ""
+    }
+    var trackPreviewURL: String {
+        ""
+    }
 
     enum CodingKeys: String, CodingKey {
         case collaborative, description

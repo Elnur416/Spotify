@@ -73,7 +73,7 @@ struct Tracks5: Codable {
 }
 
 // MARK: - Item
-struct Item2: Codable {
+struct Item2: Codable, TrackProtocol {
     let artists: [Artist]?
     let availableMarkets: [String]?
     let discNumber, durationMS: Int?
@@ -86,6 +86,18 @@ struct Item2: Codable {
     let type, uri: String?
     let isLocal: Bool?
     
+    var mainImage: String {
+        ""
+    }
+    
+    var trackName: String {
+        name ?? ""
+    }
+    
+    var subInfo: String {
+        artists?.first?.name ?? ""
+    }
+
     enum CodingKeys: String, CodingKey {
         case artists
         case availableMarkets = "available_markets"

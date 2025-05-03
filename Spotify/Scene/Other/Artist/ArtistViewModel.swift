@@ -9,6 +9,7 @@ import Foundation
 
 final class ArtistViewModel {
     private(set) var artist: ArtistInfo?
+    private(set)var artistTopTracks = [TopTrack]()
     private(set) var actorID: String
     private var useCase: ArtistUseCase
     
@@ -38,6 +39,20 @@ final class ArtistViewModel {
         useCase.getArtistInfo(id: actorID) { data, error in
             if let data {
                 self.artist = data
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    func getArtistToptracks() {
+        self.state = .loading
+        useCase.getArtistTopTracks(id: actorID) { data, error in
+            if let data {
+                guard let items = data.tracks else { return }
+                self.artistTopTracks = items
                 self.state = .loaded
                 self.state = .success
             } else if let error {

@@ -47,8 +47,15 @@ class ArtistTableHeaderView: UIView {
         b.backgroundColor = .clear
         b.layer.borderWidth = 1
         b.layer.borderColor = UIColor.white.cgColor
+        b.addTarget(self, action: #selector(followAction), for: .touchUpInside)
         b.translatesAutoresizingMaskIntoConstraints = false
         return b
+    }()
+    
+    private lazy var gradientLayer: CAGradientLayer = {
+        let l = CAGradientLayer()
+        l.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+        return l
     }()
     
     
@@ -65,10 +72,13 @@ class ArtistTableHeaderView: UIView {
     
     private func setupUI() {
         backgroundColor = .clear
-        [image,
-        name,
-        followers,
+        addSubview(image)
+        layer.addSublayer(gradientLayer)
+        [name,
+         followers,
          followButton].forEach { addSubview($0) }
+        
+        gradientLayer.frame = bounds
     }
     
     private func setupConstraints() {
@@ -76,17 +86,17 @@ class ArtistTableHeaderView: UIView {
             image.topAnchor.constraint(equalTo: topAnchor),
             image.leadingAnchor.constraint(equalTo: leadingAnchor),
             image.trailingAnchor.constraint(equalTo: trailingAnchor),
-            image.bottomAnchor.constraint(equalTo: bottomAnchor),
+            image.heightAnchor.constraint(equalToConstant: 370),
             
             followers.bottomAnchor.constraint(equalTo: image.bottomAnchor, constant: -8),
             followers.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             followers.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             
-            name.bottomAnchor.constraint(equalTo: followers.topAnchor, constant: -4),
+            name.bottomAnchor.constraint(equalTo: followers.topAnchor, constant: -8),
             name.leadingAnchor.constraint(equalTo: followers.leadingAnchor),
             name.trailingAnchor.constraint(equalTo: followers.trailingAnchor),
             
-            followButton.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            followButton.bottomAnchor.constraint(equalTo: image.bottomAnchor, constant: -8),
             followButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             followButton.heightAnchor.constraint(equalToConstant: 28),
             followButton.widthAnchor.constraint(equalToConstant: 100)
@@ -97,5 +107,9 @@ class ArtistTableHeaderView: UIView {
         loadImage(image: image, url: model.imageURL)
         name.text = model.titleName
         followers.text = "\(model.followersCount) followers"
+    }
+    
+    @objc private func followAction() {
+        followButton.setTitle("Following", for: .normal)
     }
 }

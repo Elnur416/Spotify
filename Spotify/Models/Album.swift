@@ -47,6 +47,13 @@ struct AlbumItem: Codable, ImageLabelCellProtocol {
     var itemId: String {
         id ?? ""
     }
+    
+    var artistName: String {
+        artists?.first?.name ?? ""
+    }
+    var trackPreviewURL: String {
+        ""
+    }
 
     enum CodingKeys: String, CodingKey {
         case albumType = "album_type"

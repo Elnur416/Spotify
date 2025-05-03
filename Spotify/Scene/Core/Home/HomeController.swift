@@ -153,6 +153,10 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, 
                                                     actorID: id)
                 coordinator.start()
             }
+            else if type == .track {
+                let track = self?.viewModel.data.filter({$0.type == .track}).first?.items?.filter({$0.itemId == id}).first
+                PlaybackPresenter.shared.startPlayback(from: self ?? UIViewController(), track: track!)
+            }
         }
         return cell
     }
