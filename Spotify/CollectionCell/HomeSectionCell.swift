@@ -70,8 +70,8 @@ class HomeSectionCell: UICollectionViewCell {
         ])
     }
     
-    func configure(text: String, data: DataType) {
-        self.titleText.text = text
+    func configure(data: DataType) {
+        self.titleText.text = data.title?.rawValue
         self.data = data
     }
 }

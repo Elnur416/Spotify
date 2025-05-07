@@ -43,6 +43,7 @@ class HomeController: BaseController {
         c.delegate = self
         c.showsVerticalScrollIndicator = false
         c.register(HomeSectionCell.self, forCellWithReuseIdentifier: "\(HomeSectionCell.self)")
+        c.register(ImageLabelCell.self, forCellWithReuseIdentifier: "\(ImageLabelCell.self)")
         c.register(HomeHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "\(HomeHeaderView.self)")
         c.translatesAutoresizingMaskIntoConstraints = false
         return c
@@ -127,7 +128,22 @@ class HomeController: BaseController {
     }
     
     @objc private func segmentChanged() {
-        
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            collection.reloadData()
+        case 1:
+            let layout = UICollectionViewFlowLayout()
+            collection.collectionViewLayout = layout
+            layout.sectionInset = .init(top: 0, left: 20, bottom: 40, right: 20)
+            collection.reloadData()
+        case 2:
+            let layout = UICollectionViewFlowLayout()
+            collection.collectionViewLayout = layout
+            layout.sectionInset = .init(top: 0, left: 20, bottom: 40, right: 20)
+            collection.reloadData()
+        default:
+            break
+        }
     }
 }
 
@@ -135,30 +151,53 @@ class HomeController: BaseController {
 
 extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.data.count
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            return viewModel.data.count
+        case 1:
+            return viewModel.data.first(where: { $0.type == .album })?.items?.count ?? 0
+        case 2:
+            return viewModel.data.first(where: { $0.type == .track })?.items?.count ?? 0
+        default:
+            return 0
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(HomeSectionCell.self)", for: indexPath) as!
-        HomeSectionCell
-        cell.configure(text: viewModel.data[indexPath.item].title?.rawValue ?? "",
-                       data: viewModel.data[indexPath.item])
-        cell.indexCallBack = { [weak self] type, id in
-            if type == .album {
-                let coordinator = AlbumCoordinator(navigationController: self?.navigationController ?? UINavigationController(),
-                                                   id: id)
-                coordinator.start()
-            } else if type == .artist {
-                let coordinator = ArtistCoordinator(navigationController: self?.navigationController ?? UINavigationController(),
-                                                    actorID: id)
-                coordinator.start()
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            let cell1 = collectionView.dequeueReusableCell(withReuseIdentifier: "\(HomeSectionCell.self)", for: indexPath) as!
+            HomeSectionCell
+            cell1.configure(data: viewModel.data[indexPath.item])
+            cell1.indexCallBack = { [weak self] type, id in
+                if type == .album {
+                    let coordinator = AlbumCoordinator(navigationController: self?.navigationController ?? UINavigationController(),
+                                                       id: id)
+                    coordinator.start()
+                } else if type == .artist {
+                    let coordinator = ArtistCoordinator(navigationController: self?.navigationController ?? UINavigationController(),
+                                                        actorID: id)
+                    coordinator.start()
+                }
+                else if type == .track {
+                    let track = self?.viewModel.data.filter({$0.type == .track}).first?.items?.filter({$0.itemId == id}).first
+                    PlaybackPresenter.shared.startPlayback(from: self ?? UIViewController(), track: track!)
+                }
             }
-            else if type == .track {
-                let track = self?.viewModel.data.filter({$0.type == .track}).first?.items?.filter({$0.itemId == id}).first
-                PlaybackPresenter.shared.startPlayback(from: self ?? UIViewController(), track: track!)
-            }
+            return cell1
+        case 1:
+            let cell2 = collectionView.dequeueReusableCell(withReuseIdentifier: "\(ImageLabelCell.self)", for: indexPath) as! ImageLabelCell
+            guard let data = viewModel.data.first(where: { $0.type == .album })?.items?[indexPath.item] else { return cell2 }
+            cell2.configure(model: data, type: .album)
+            return cell2
+        case 2:
+            let cell2 = collectionView.dequeueReusableCell(withReuseIdentifier: "\(ImageLabelCell.self)", for: indexPath) as! ImageLabelCell
+            guard let data = viewModel.data.first(where: { $0.type == .track })?.items?[indexPath.item] else { return cell2 }
+            cell2.configure(model: data, type: .track)
+            return cell2
+        default:
+            return UICollectionViewCell()
         }
-        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -170,10 +209,42 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, 
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        .init(width: collectionView.frame.width, height: 280)
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+                .init(width: collectionView.frame.width, height: 280)
+        case 1:
+                .init(width: 0, height: 0)
+        default:
+                .init(width: 0, height: 0)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        .init(width: collectionView.frame.width, height: 250)
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            .init(width: collectionView.frame.width, height: 250)
+        case 1:
+                .init(width: 150, height: 200)
+        case 2:
+                .init(width: 150, height: 200)
+        default:
+                .init(width: collectionView.frame.width, height: 250)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            break
+        case 1:
+            guard let item = viewModel.data.first(where: { $0.type == .album })?.items?[indexPath.item] else { return }
+            let coordinator = AlbumCoordinator(navigationController: self.navigationController ?? UINavigationController(), id: item.itemId)
+            coordinator.start()
+        case 2:
+            let track = self.viewModel.data.first(where: { $0.type == .track })?.items?[indexPath.item]
+            PlaybackPresenter.shared.startPlayback(from: self, track: track!)
+        default:
+            break
+        }
     }
 }
