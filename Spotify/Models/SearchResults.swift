@@ -48,6 +48,22 @@ struct ArtistsItem: Codable, SearchDataProtocol {
     var followersCount: Int {
         followers?.total ?? 0
     }
+    
+    var nameText: String {
+        name ?? ""
+    }
+    
+    var itemId: String {
+        id ?? ""
+    }
+    
+    var artistName: String {
+        name ?? ""
+    }
+    
+    var trackPreviewURL: String {
+        ""
+    }
 
     enum CodingKeys: String, CodingKey {
         case externalUrls = "external_urls"
@@ -101,6 +117,22 @@ struct TracksItem: Codable, SearchDataProtocol {
     
     var followersCount: Int {
         popularity ?? 0
+    }
+    
+    var nameText: String {
+        name ?? ""
+    }
+    
+    var itemId: String {
+        id ?? ""
+    }
+    
+    var artistName: String {
+        artists?.first?.name ?? ""
+    }
+    
+    var trackPreviewURL: String {
+        ""
     }
 
     enum CodingKeys: String, CodingKey {

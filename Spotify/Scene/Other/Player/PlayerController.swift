@@ -37,6 +37,8 @@ class PlayerController: BaseController {
     
     override func setupUI() {
         view.backgroundColor = .black
+        setupGradientLayer()
+        navigationController?.navigationBar.isHidden = true
         [imageView,
          controlsView].forEach { view.addSubview($0) }
         controlsView.translatesAutoresizingMaskIntoConstraints = false
@@ -69,7 +71,6 @@ class PlayerController: BaseController {
     }
 
     func refreshUI() {
-
         configure()
     }
 }

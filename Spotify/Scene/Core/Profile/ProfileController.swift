@@ -163,9 +163,7 @@ class ProfileController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getCurrentUser()
-        viewModel.getFollowedArtists()
-        viewModel.getUserPlaylists()
+        viewModel.getAllData()
     }
     
     override func setupUI() {
@@ -261,7 +259,7 @@ class ProfileController: BaseController {
     }
     
     @objc private func showFollowingArtists() {
-        let controller = FollowingArtistsController(viewModel: .init(artists: viewModel.artists))
+        let controller = FollowingArtistsController(viewModel: .init(useCase: UserManager()))
         navigationController?.show(controller, sender: nil)
     }
     

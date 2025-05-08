@@ -22,10 +22,30 @@ struct Cursors2: Codable {
 }
 
 // MARK: - Item
-struct RecentItem: Codable {
+struct RecentItem: Codable, ImageLabelCellProtocol {
     let track: Track2?
     let playedAt: String?
     let context: Context?
+    
+    var nameText: String {
+        track?.name ?? ""
+    }
+    
+    var imageURL: String {
+        track?.album?.images?.first?.url ?? ""
+    }
+    
+    var itemId: String {
+        track?.id ?? ""
+    }
+    
+    var artistName: String {
+        track?.artists?.first?.name ?? ""
+    }
+    
+    var trackPreviewURL: String {
+        track?.previewURL ?? ""
+    }
 
     enum CodingKeys: String, CodingKey {
         case track

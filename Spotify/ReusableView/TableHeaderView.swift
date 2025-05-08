@@ -50,7 +50,24 @@ class TableHeaderView: UIView {
         b.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
         b.tintColor = .white
         b.setTitleColor(.white, for: .normal)
-        b.backgroundColor = .systemGray5
+        b.backgroundColor = .clear
+        b.layer.borderWidth = 1
+        b.layer.borderColor = UIColor.white.cgColor
+        b.layer.cornerRadius = 14
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }()
+    
+    private lazy var saveButton: UIButton = {
+        let b = UIButton(type: .custom)
+        b.setImage(UIImage(systemName: "plus.app"), for: .normal)
+        b.setTitle(" Save", for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+        b.tintColor = .white
+        b.setTitleColor(.white, for: .normal)
+        b.backgroundColor = .clear
+        b.layer.borderWidth = 1
+        b.layer.borderColor = UIColor.white.cgColor
         b.layer.cornerRadius = 14
         b.translatesAutoresizingMaskIntoConstraints = false
         return b
@@ -73,7 +90,8 @@ class TableHeaderView: UIView {
         [image,
         titleLabel,
         subLabel,
-        editButton].forEach { addSubview($0) }
+        editButton,
+        saveButton].forEach { addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -93,8 +111,13 @@ class TableHeaderView: UIView {
             
             editButton.topAnchor.constraint(equalTo: subLabel.bottomAnchor, constant: 8),
             editButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            editButton.widthAnchor.constraint(equalToConstant: 70),
-            editButton.heightAnchor.constraint(equalToConstant: 28)
+            editButton.widthAnchor.constraint(equalToConstant: 100),
+            editButton.heightAnchor.constraint(equalToConstant: 28),
+            
+            saveButton.topAnchor.constraint(equalTo: subLabel.bottomAnchor, constant: 8),
+            saveButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            saveButton.widthAnchor.constraint(equalToConstant: 100),
+            saveButton.heightAnchor.constraint(equalToConstant: 28),
         ])
     }
     
@@ -104,6 +127,10 @@ class TableHeaderView: UIView {
         subLabel.text = "\(model.ownerName) · \(model.totalTracksCount) songs"
         if type == .album {
             editButton.isHidden = true
+            saveButton.isHidden = false
+        } else if type == .playlist {
+            editButton.isHidden = false
+            saveButton.isHidden = true
         }
     }
 }

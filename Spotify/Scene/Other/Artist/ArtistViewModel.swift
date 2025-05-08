@@ -11,6 +11,7 @@ final class ArtistViewModel {
     private(set) var artist: ArtistInfo?
     private(set)var artistTopTracks = [TopTrack]()
     private(set) var actorID: String
+    private(set) var isArtistFollowing: [Bool]?
     private var useCase: ArtistUseCase
     
     init(actorID: String, useCase: ArtistUseCase) {
@@ -34,7 +35,13 @@ final class ArtistViewModel {
         }
     }
     
-    func getArtistInfo() {
+    func getAllData() {
+        getArtistInfo()
+        getArtistToptracks()
+        checkFollowStatus()
+    }
+    
+    private func getArtistInfo() {
         self.state = .loading
         useCase.getArtistInfo(id: actorID) { data, error in
             if let data {
@@ -47,12 +54,51 @@ final class ArtistViewModel {
         }
     }
     
-    func getArtistToptracks() {
+    private func getArtistToptracks() {
         self.state = .loading
         useCase.getArtistTopTracks(id: actorID) { data, error in
             if let data {
                 guard let items = data.tracks else { return }
                 self.artistTopTracks = items
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    private func checkFollowStatus() {
+        self.state = .loading
+        useCase.checkFollowStatus(id: actorID) { data, error in
+            if let data {
+                self.isArtistFollowing = data
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    func followArtist() {
+        self.state = .loading
+        useCase.followArtist(id: actorID) { data, error in
+            if data != nil {
+                self.isArtistFollowing = [true]
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    func unfollowArtist() {
+        self.state = .loading
+        useCase.unfollowArtist(id: actorID) { data, error in
+            if data != nil {
+                self.isArtistFollowing = [false]
                 self.state = .loaded
                 self.state = .success
             } else if let error {

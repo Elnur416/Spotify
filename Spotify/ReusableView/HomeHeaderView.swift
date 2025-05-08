@@ -38,6 +38,7 @@ class HomeHeaderView: UICollectionReusableView {
 //    MARK: - Properties
     
     private var items = [RecentItem]()
+    var trackCallback: ((RecentItem) -> Void)?
         
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -90,5 +91,10 @@ extension HomeHeaderView: UICollectionViewDataSource, UICollectionViewDelegate, 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         .init(width: collectionView.frame.width / 2 - 16, height: 50)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let track = items[indexPath.item]
+        trackCallback?(track)
     }
 }

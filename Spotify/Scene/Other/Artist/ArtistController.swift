@@ -58,8 +58,7 @@ class ArtistController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getArtistInfo()
-        viewModel.getArtistToptracks()
+        viewModel.getAllData()
         configureTableHeader()
     }
     
@@ -107,7 +106,13 @@ class ArtistController: BaseController {
     private func configureData() {
         guard let data = viewModel.artist,
         let header = table.tableHeaderView as? ArtistTableHeaderView else { return }
-        header.configure(model: data)
+        header.configure(model: data, isFollowing: viewModel.isArtistFollowing?.first ?? false)
+        header.followCallback = { [weak self] in
+            self?.viewModel.followArtist()
+        }
+        header.unfollowCallback = { [weak self] in
+            self?.viewModel.unfollowArtist()
+        }
     }
     
     private func configureTableHeader() {
@@ -117,6 +122,7 @@ class ArtistController: BaseController {
     
     @objc private func backAction() {
         navigationController?.popViewController(animated: true)
+        navigationController?.navigationBar.isHidden = false
     }
 }
 

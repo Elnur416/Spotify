@@ -55,6 +55,12 @@ class LibraryController: BaseController {
         viewModel.getAllData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = false
+    }
+    
     override func setupUI() {
         view.backgroundColor = .clear
         navigationController?.navigationBar.prefersLargeTitles = true

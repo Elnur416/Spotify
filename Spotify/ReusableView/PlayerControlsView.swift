@@ -161,7 +161,7 @@ final class PlayerControlsView: UIView {
     }
 
     func configure(with viewModel: PlayerControlsViewModel) {
-//        nameLabel.text = viewModel.title
-//        subtitleLabel.text = viewModel.subtitle
+        nameLabel.text = viewModel.title
+        subtitleLabel.text = viewModel.subtitle
     }
 }

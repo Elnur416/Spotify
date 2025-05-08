@@ -8,6 +8,8 @@
 import Foundation
 import Alamofire
 
+typealias Empty = Alamofire.Empty
+
 final class NetworkManager {
     func request<T: Codable>(path: String,
                              model: T.Type,

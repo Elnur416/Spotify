@@ -110,6 +110,10 @@ extension SearchController: UICollectionViewDataSource, UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         .init(width: collectionView.frame.width / 2 - 16, height: 100)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+    }
 }
 
 extension SearchController: UISearchResultsUpdating {
@@ -119,5 +123,10 @@ extension SearchController: UISearchResultsUpdating {
         viewModel.getSearchResults(query: query)
         guard let data = viewModel.searchResults else { return }
         resultsController.updateData(items: data)
+        resultsController.artistIDCallback = { [weak self] id in
+            let coordinator = ArtistCoordinator(navigationController: self?.navigationController ?? UINavigationController(),
+                                                actorID: id)
+            coordinator.start()
+        }
     }
 }

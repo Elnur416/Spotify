@@ -18,6 +18,8 @@ class HomeController: BaseController {
         i.clipsToBounds = true
         i.layer.borderWidth = 1
         i.layer.borderColor = UIColor.white.cgColor
+        i.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showSettings)))
+        i.isUserInteractionEnabled = true
         i.translatesAutoresizingMaskIntoConstraints = false
         return i
     }()
@@ -78,6 +80,12 @@ class HomeController: BaseController {
         viewModel.getAllData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     override func setupUI() {
         navigationController?.navigationBar.isHidden = true
         [indicatorview,
@@ -134,16 +142,32 @@ class HomeController: BaseController {
         case 1:
             let layout = UICollectionViewFlowLayout()
             collection.collectionViewLayout = layout
-            layout.sectionInset = .init(top: 0, left: 20, bottom: 40, right: 20)
+            layout.sectionInset = .init(top: 0, left: 32, bottom: 40, right: 32)
             collection.reloadData()
         case 2:
             let layout = UICollectionViewFlowLayout()
             collection.collectionViewLayout = layout
-            layout.sectionInset = .init(top: 0, left: 20, bottom: 40, right: 20)
+            layout.sectionInset = .init(top: 0, left: 32, bottom: 40, right: 32)
             collection.reloadData()
         default:
             break
         }
+    }
+    
+    @objc private func showSettings() {
+        guard let user = viewModel.user else { return }
+        let controller = SettingsController(viewModel: .init(user: user))
+        let navController = UINavigationController(rootViewController: controller)
+
+        if let sheet = navController.sheetPresentationController {
+            sheet.detents = [
+                .custom { _ in return 200 }
+            ]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+        }
+
+        present(navController, animated: true)
     }
 }
 
@@ -205,6 +229,10 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, 
                                                                      withReuseIdentifier: "\(HomeHeaderView.self)",
                                                                      for: indexPath) as! HomeHeaderView
         header.configure(data: viewModel.recentlyPlayed)
+        header.trackCallback = { [weak self] track in
+            PlaybackPresenter.shared.startPlayback(from: self ?? UIViewController(),
+                                                   track: track)
+        }
         return header
     }
     

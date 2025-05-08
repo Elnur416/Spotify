@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol SearchDataProtocol {
+protocol SearchDataProtocol: ImageLabelCellProtocol {
     var titleName: String { get }
     var imageURL: String { get }
     var followersCount: Int { get }

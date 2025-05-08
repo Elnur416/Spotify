@@ -58,6 +58,12 @@ class ArtistTableHeaderView: UIView {
         return l
     }()
     
+//    MARK: - Properties
+    
+    private var isFollowing: Bool?
+    var followCallback: (() -> Void)?
+    var unfollowCallback: (() -> Void)?
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -103,13 +109,26 @@ class ArtistTableHeaderView: UIView {
         ])
     }
     
-    func configure(model: ArtistInfo) {
+    func configure(model: ArtistInfo, isFollowing: Bool) {
         loadImage(image: image, url: model.imageURL)
         name.text = model.titleName
         followers.text = "\(model.followersCount) followers"
+        self.isFollowing = isFollowing
+        followButton.setTitle(isFollowing ? "Following" : "Follow", for: .normal)
     }
     
     @objc private func followAction() {
-        followButton.setTitle("Following", for: .normal)
+        guard let isFollowing = self.isFollowing else { return }
+        
+        let newValue = !isFollowing
+        self.isFollowing = newValue
+        
+        followButton.setTitle(newValue ? "Following" : "Follow", for: .normal)
+        
+        if newValue {
+            followCallback?()
+        } else {
+            unfollowCallback?()
+        }
     }
 }

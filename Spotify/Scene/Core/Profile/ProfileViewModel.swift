@@ -33,7 +33,13 @@ final class ProfileViewModel {
         }
     }
     
-    func getCurrentUser() {
+    func getAllData() {
+        getCurrentUser()
+        getUserPlaylists()
+        getFollowedArtists()
+    }
+    
+    private func getCurrentUser() {
         state = .loading
         useCase.getCurrentUserProfile { data, error in
             if let data {
@@ -46,7 +52,7 @@ final class ProfileViewModel {
         }
     }
     
-    func getFollowedArtists() {
+    private func getFollowedArtists() {
         state = .loading
         useCase.getFollowedArtists { data, error in
             if let data {
@@ -60,7 +66,7 @@ final class ProfileViewModel {
         }
     }
     
-    func getUserPlaylists() {
+    private func getUserPlaylists() {
         state = .loading
         useCase.getUserPlaylists { data, error in
             if let data {

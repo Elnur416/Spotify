@@ -35,6 +35,7 @@ class SearchResultsController: BaseController {
 //    MARK: - Properties
     
     private var sections = [TableData]()
+    var artistIDCallback: ((String) -> Void)?
     
 //    MARK: - Life cycle
 
@@ -91,5 +92,17 @@ extension SearchResultsController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         .init(66)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selected = sections[indexPath.section].results[indexPath.row]
+        
+        switch sections[indexPath.section].title {
+        case .tracks:
+            PlaybackPresenter.shared.startPlayback(from: self, track: selected)
+        case .artist:
+            let id = selected.itemId
+            artistIDCallback?(id)
+        }
     }
 }

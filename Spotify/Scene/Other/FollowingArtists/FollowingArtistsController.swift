@@ -32,18 +32,29 @@ class FollowingArtistsController: BaseController {
         return t
     }()
     
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        return refreshControl
+    }()
+        
 //    MARK: - Life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        viewModel.getFollowingArtists()
+    }
+    
+    @objc private func refreshData() {
+        viewModel.getFollowingArtists()
     }
     
     override func setupUI() {
         title = "Following"
         view.backgroundColor = .black
         view.addSubview(table)
+        table.refreshControl = refreshControl
     }
     
     override func setupConstraints() {
@@ -53,6 +64,16 @@ class FollowingArtistsController: BaseController {
             table.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             table.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+    }
+    
+    override func configureViewModel() {
+        viewModel.success = { [weak self] in
+            self?.table.reloadData()
+            self?.refreshControl.endRefreshing()
+        }
+        viewModel.error = { [weak self] error in
+            self?.showAlert(message: error)
+        }
     }
 }
 
