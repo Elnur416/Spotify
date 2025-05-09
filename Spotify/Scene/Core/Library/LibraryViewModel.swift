@@ -12,6 +12,7 @@ final class LibraryViewModel {
     var section: LibrarySectionNames? = .playlists
     private(set) var playlists = [PlaylistItem]()
     private(set) var albums = [AlbumsItem]()
+    private(set) var tracks = [SavedTrackItem]()
     
     init(useCase: LibraryUseCase) {
         self.useCase = useCase
@@ -36,6 +37,7 @@ final class LibraryViewModel {
     func getAllData() {
         getUserPLaylists()
         getUserSavedAlbums()
+        getUserSavedTracks()
     }
     
     private func getUserPLaylists() {
@@ -58,6 +60,19 @@ final class LibraryViewModel {
             if let data {
                 guard let items = data.items else { return }
                 self.albums = items
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    private func getUserSavedTracks() {
+        self.state = .loading
+        useCase.getUserSavedTracks { data, error in
+            if let data {
+                self.tracks = data.items ?? []
                 self.state = .loaded
                 self.state = .success
             } else if let error {

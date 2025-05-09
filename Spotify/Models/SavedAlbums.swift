@@ -7,7 +7,7 @@
 
 import Foundation
 
-// MARK: - Albums
+// MARK: - Albums2
 struct Albums2: Codable {
     let href: String?
     let items: [AlbumsItem]?
@@ -18,7 +18,7 @@ struct Albums2: Codable {
     let total: Int?
 }
 
-// MARK: - AlbumsItem
+// MARK: - Albums2Item
 struct AlbumsItem: Codable, ImageLabelCellProtocol {
     let addedAt: String?
     let album: Album5?
@@ -36,8 +36,9 @@ struct AlbumsItem: Codable, ImageLabelCellProtocol {
     }
     
     var artistName: String {
-       ""
+        album?.artists?.first?.name ?? ""
     }
+    
     var trackPreviewURL: String {
         ""
     }
@@ -60,9 +61,9 @@ struct Album5: Codable {
     let name, releaseDate, releaseDatePrecision, type: String?
     let uri: String?
     let artists: [Artist5]?
-    let tracks: Tracks3?
+    let tracks: Tracks6?
     let copyrights: [Copyright]?
-    let externalIDS: [String: String]?
+    let externalIDS: ExternalIDS?
     let genres: [String]?
     let label: String?
     let popularity: Int?
@@ -86,8 +87,8 @@ struct Artist5: Codable {
     let externalUrls: ExternalUrls?
     let href: String?
     let id: String?
-    let name: Name?
-    let type: ArtistType?
+    let name: String?
+    let type: String?
     let uri: String?
 
     enum CodingKeys: String, CodingKey {
@@ -96,24 +97,13 @@ struct Artist5: Codable {
     }
 }
 
-enum Name: String, Codable {
-    case mcFabinhoDaOsk = "MC Fabinho da Osk"
-    case nxght = "NXGHT!"
-    case scythermane = "Scythermane"
-    case sıfırKM = "Sıfır Km"
-}
-
-enum ArtistType: String, Codable {
-    case artist = "artist"
-}
-
 // MARK: - Copyright
 struct Copyright: Codable {
     let text, type: String?
 }
 
 // MARK: - Tracks
-struct Tracks3: Codable {
+struct Tracks6: Codable {
     let href: String?
     let limit: Int?
     let next: String?
@@ -134,9 +124,10 @@ struct TracksItem2: Codable {
     let id, name: String?
     let previewURL: String?
     let trackNumber: Int?
-    let type: ItemType?
+    let type: String?
     let uri: String?
     let isLocal: Bool?
+    let linkedFrom: Artist5?
 
     enum CodingKeys: String, CodingKey {
         case artists
@@ -150,9 +141,6 @@ struct TracksItem2: Codable {
         case trackNumber = "track_number"
         case type, uri
         case isLocal = "is_local"
+        case linkedFrom = "linked_from"
     }
-}
-
-enum ItemType: String, Codable {
-    case track = "track"
 }

@@ -16,4 +16,17 @@ final class AlbumManager: AlbumUseCase {
                         model: Album6.self,
                         completion: completion)
     }
+    
+    func saveAlbum(id: String, completion: @escaping (Empty?, String?) -> Void) {
+        let path = AlbumEndpoint.saveAlbum.path
+        let params: [String: Any] = ["ids": [
+            "\(id)"
+        ]]
+        manager.request(path: path,
+                        model: Empty.self,
+                        method: .put,
+                        params: params,
+                        encodingType: .json,
+                        completion: completion)
+    }
 }

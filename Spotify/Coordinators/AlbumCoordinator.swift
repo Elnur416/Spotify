@@ -18,7 +18,9 @@ final class AlbumCoordinator: Coordinator {
     }
     
     func start() {
-        let controller = AlbumController(viewModel: .init(id: id, useCase: AlbumManager()))
+        let controller = AlbumController(viewModel: .init(id: id,
+                                                          useCase: AlbumManager(),
+                                                          trackUseCase: TrackManager()))
         navigationController.show(controller, sender: nil)
     }
 }

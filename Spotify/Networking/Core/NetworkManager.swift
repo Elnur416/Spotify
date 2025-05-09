@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 
 typealias Empty = Alamofire.Empty
+struct EmptyResponse: Codable {}
 
 final class NetworkManager {
     func request<T: Codable>(path: String,

@@ -16,4 +16,23 @@ final class PlaylistManager: PlaylistUseCase {
                         model: Playlist.self,
                         completion: completion)
     }
+    
+    func getUserPlaylists(completion: @escaping ((Playlists?, String?) -> Void)) {
+        let path = UserEndpoint.userPlaylists.path
+        manager.request(path: path,
+                        model: Playlists.self,
+                        completion: completion)
+    }
+    
+    func addItemsToPlaylist(id: String, uris: String, completion: @escaping (SnapshotResponse?, String?) -> Void) {
+        let path = PlaylistEndpoint.addToPlaylist(id: id).path
+        let params: [String: Any] = ["uris": ["\(uris)"],
+                                     "position": 0]
+        manager.request(path: path,
+                        model: SnapshotResponse.self,
+                        method: .post,
+                        params: params,
+                        encodingType: .json,
+                        completion: completion)
+    }
 }

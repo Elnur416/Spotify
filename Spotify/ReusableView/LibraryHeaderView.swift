@@ -15,6 +15,7 @@ struct LibrarySectionModel {
 enum LibrarySectionNames: String {
     case playlists = "Playlists"
     case albums = "Albums"
+    case tracks = "Tracks"
 }
 
 class LibraryHeaderView: UICollectionReusableView {
@@ -50,7 +51,8 @@ class LibraryHeaderView: UICollectionReusableView {
     var sectionCallBack: ((LibrarySectionNames) -> Void)?
     
     private var sectionModels: [LibrarySectionModel] = [.init(name: .playlists, isSelected: true),
-                                                        .init(name: .albums, isSelected: false)]
+                                                        .init(name: .albums, isSelected: false),
+                                                        .init(name: .tracks, isSelected: false)]
     
     
     override init(frame: CGRect) {
@@ -77,7 +79,7 @@ class LibraryHeaderView: UICollectionReusableView {
             collection.leadingAnchor.constraint(equalTo: leadingAnchor),
             collection.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
+            button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             button.centerYAnchor.constraint(equalTo: centerYAnchor),
             button.heightAnchor.constraint(equalToConstant: 30),
             button.widthAnchor.constraint(equalToConstant: 100)
@@ -87,7 +89,7 @@ class LibraryHeaderView: UICollectionReusableView {
 
 extension LibraryHeaderView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        2
+        3
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

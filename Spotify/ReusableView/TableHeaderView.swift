@@ -69,9 +69,14 @@ class TableHeaderView: UIView {
         b.layer.borderWidth = 1
         b.layer.borderColor = UIColor.white.cgColor
         b.layer.cornerRadius = 14
+        b.addTarget(self, action: #selector(saveAction), for: .touchUpInside)
         b.translatesAutoresizingMaskIntoConstraints = false
         return b
     }()
+    
+//    MARK: - Properties
+    
+    var saveActionHandler: (() -> Void)?
     
     
     override init(frame: CGRect) {
@@ -119,6 +124,10 @@ class TableHeaderView: UIView {
             saveButton.widthAnchor.constraint(equalToConstant: 100),
             saveButton.heightAnchor.constraint(equalToConstant: 28),
         ])
+    }
+    
+    @objc private func saveAction() {
+        saveActionHandler?()
     }
     
     func configure(model: HeaderProtocol, type: HeaderType) {

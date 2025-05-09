@@ -134,10 +134,37 @@ extension ArtistController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "\(TrackInAlbumCell.self)") as! TrackInAlbumCell
         cell.configure(model: viewModel.artistTopTracks[indexPath.item])
+        cell.addCallBack = { [weak self] in
+            self?.viewModel.selectedTrack = self?.viewModel.artistTopTracks[indexPath.item]
+            let controller = AddController()
+            controller.delegate = self
+            let navController = UINavigationController(rootViewController: controller)
+            if let sheet = navController.sheetPresentationController {
+                sheet.detents = [
+                    .custom { _ in return 200 }
+                ]
+                sheet.prefersGrabberVisible = true
+                sheet.preferredCornerRadius = 20
+            }
+            self?.present(navController, animated: true)
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         .init(66)
+    }
+}
+
+extension ArtistController: AddControllerDelegate {
+    func addToPlaylist() {
+        let coordinator = AddToPlaylistCoordinator(navigationController: self.navigationController ?? UINavigationController(),
+                                                   trackURI: viewModel.selectedTrack?.uri ?? "")
+        coordinator.start()
+    }
+    
+    func saveTrack() {
+        let id = viewModel.selectedTrack?.id ?? ""
+        viewModel.saveTrackToLibrary(trackID: id)
     }
 }

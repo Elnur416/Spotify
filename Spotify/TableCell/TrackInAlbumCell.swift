@@ -9,6 +9,8 @@ import UIKit
 
 class TrackInAlbumCell: UITableViewCell {
     
+//    MARK: UI elements
+    
     private lazy var titleLabel: UILabel = {
         let l = UILabel()
         l.font = .systemFont(ofSize: 17, weight: .medium)
@@ -27,14 +29,18 @@ class TrackInAlbumCell: UITableViewCell {
         return l
     }()
     
-    private lazy var addPlaylistButton: UIButton = {
+    private lazy var addButton: UIButton = {
         let b = UIButton()
-        b.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+        b.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
         b.tintColor = .white
-        b.addTarget(self, action: #selector(addPlaylist), for: .touchUpInside)
+        b.addTarget(self, action: #selector(addAction), for: .touchUpInside)
         b.translatesAutoresizingMaskIntoConstraints = false
         return b
     }()
+    
+//    MARK: - Properties
+    
+    var addCallBack: (() -> Void)?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -57,33 +63,27 @@ class TrackInAlbumCell: UITableViewCell {
         backgroundColor = .clear
         [titleLabel,
         subLabel,
-         addPlaylistButton].forEach { contentView.addSubview($0) }
+         addButton].forEach { contentView.addSubview($0) }
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-            titleLabel.trailingAnchor.constraint(equalTo: addPlaylistButton.leadingAnchor, constant: -12),
+            titleLabel.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -12),
 
             subLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             subLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             subLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
             
-            addPlaylistButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28),
-            addPlaylistButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            addPlaylistButton.widthAnchor.constraint(equalToConstant: 30)
+            addButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28),
+            addButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            addButton.widthAnchor.constraint(equalToConstant: 30)
         ])
     }
     
-    @objc private func addPlaylist() {
-        addPlaylistButton.isSelected.toggle()
-        
-        let imageName = addPlaylistButton.isSelected ? "checkmark.circle" : "plus.circle"
-        let color = addPlaylistButton.isSelected ? UIColor.green2 : UIColor.white
-        
-        addPlaylistButton.setImage(UIImage(systemName: imageName), for: .normal)
-        addPlaylistButton.tintColor = color
+    @objc private func addAction() {
+        addCallBack?()
     }
     
     func configure(model: TrackProtocol) {

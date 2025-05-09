@@ -10,4 +10,5 @@ import Foundation
 protocol LibraryUseCase {
     func getUserPlaylists(completion: @escaping((Playlists?, String?) -> Void))
     func getUserSavedAlbums(completion: @escaping((Albums2?, String?) -> Void))
+    func getUserSavedTracks(completion: @escaping((SavedTracks?, String?) -> Void))
 }

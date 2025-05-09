@@ -105,6 +105,9 @@ class AlbumController: BaseController {
     private func configureHeaderView() {
         let header = TableHeaderView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 370))
         table.tableHeaderView = header
+        header.saveActionHandler = { [weak self] in
+            self?.viewModel.saveAlbum()
+        }
     }
     
     private func configureData() {
@@ -128,11 +131,37 @@ extension AlbumController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "\(TrackInAlbumCell.self)") as! TrackInAlbumCell
         guard let data = viewModel.album?.tracks?.items?[indexPath.item] else { return cell }
         cell.configure(model: data)
+        cell.addCallBack = { [weak self] in
+            self?.viewModel.selectedTrack = self?.viewModel.album?.tracks?.items?[indexPath.item]
+            let controller = AddController()
+            controller.delegate = self
+            let navController = UINavigationController(rootViewController: controller)
+            if let sheet = navController.sheetPresentationController {
+                sheet.detents = [
+                    .custom { _ in return 200 }
+                ]
+                sheet.prefersGrabberVisible = true
+                sheet.preferredCornerRadius = 20
+            }
+            self?.present(navController, animated: true)
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         66
+    }
+}
+
+extension AlbumController: AddControllerDelegate {
+    func addToPlaylist() {
+        let coordinator = AddToPlaylistCoordinator(navigationController: self.navigationController ?? UINavigationController(),
+                                                   trackURI: viewModel.selectedTrack?.uri ?? "")
+        coordinator.start()
+    }
+    
+    func saveTrack() {
+        viewModel.saveTrackToLibrary(trackID: viewModel.selectedTrack?.id ?? "")
     }
 }
 

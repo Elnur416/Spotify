@@ -9,4 +9,5 @@ import Foundation
 
 protocol AlbumUseCase {
     func getAlbum(id: String, completion: @escaping ((Album6?, String?) -> Void))
+    func saveAlbum(id: String, completion: @escaping ((Empty?, String?) -> Void))
 }

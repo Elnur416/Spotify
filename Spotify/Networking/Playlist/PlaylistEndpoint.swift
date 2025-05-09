@@ -9,11 +9,17 @@ import Foundation
 
 enum PlaylistEndpoint {
     case playlist(id: String)
+    case userPlaylists
+    case addToPlaylist(id: String)
     
     var path: String {
         switch self {
         case .playlist(let id):
             return NetworkHelper.shared.configureURL(endpoint: "/playlists/\(id)")
+        case .userPlaylists:
+            return NetworkHelper.shared.configureURL(endpoint: "/me/playlists")
+        case .addToPlaylist(let id):
+            return NetworkHelper.shared.configureURL(endpoint: "/playlists/\(id)/tracks")
         }
     }
 }

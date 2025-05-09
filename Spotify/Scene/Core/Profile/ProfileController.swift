@@ -166,6 +166,12 @@ class ProfileController: BaseController {
         viewModel.getAllData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = false
+    }
+    
     override func setupUI() {
         setupGradientLayer()
         [indicatorview,

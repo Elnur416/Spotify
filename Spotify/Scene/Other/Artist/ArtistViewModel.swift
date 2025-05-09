@@ -13,10 +13,13 @@ final class ArtistViewModel {
     private(set) var actorID: String
     private(set) var isArtistFollowing: [Bool]?
     private var useCase: ArtistUseCase
+    private var trackUseCase: TrackUseCase
+    var selectedTrack: TopTrack?
     
-    init(actorID: String, useCase: ArtistUseCase) {
+    init(actorID: String, useCase: ArtistUseCase, trackUseCase: TrackUseCase) {
         self.actorID = actorID
         self.useCase = useCase
+        self.trackUseCase = trackUseCase
     }
     
     enum ViewState {
@@ -99,6 +102,18 @@ final class ArtistViewModel {
         useCase.unfollowArtist(id: actorID) { data, error in
             if data != nil {
                 self.isArtistFollowing = [false]
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    func saveTrackToLibrary(trackID: String) {
+        self.state = .loading
+        trackUseCase.saveTrack(id: trackID) { data, error in
+            if data == nil {
                 self.state = .loaded
                 self.state = .success
             } else if let error {

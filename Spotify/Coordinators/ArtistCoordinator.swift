@@ -18,7 +18,9 @@ final class ArtistCoordinator: Coordinator {
     }
     
     func start() {
-        let controller = ArtistController(viewModel: .init(actorID: actorID, useCase: ArtistManager()))
+        let controller = ArtistController(viewModel: .init(actorID: actorID,
+                                                           useCase: ArtistManager(),
+                                                           trackUseCase: TrackManager()))
         navigationController.show(controller, sender: nil)
     }
 }

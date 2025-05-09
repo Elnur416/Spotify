@@ -23,4 +23,11 @@ final class LibraryManager: LibraryUseCase {
                         model: Albums2.self,
                         completion: completion)
     }
+    
+    func getUserSavedTracks(completion: @escaping (SavedTracks?, String?) -> Void) {
+        let path = LibraryEndpoint.track.path
+        manager.request(path: path,
+                        model: SavedTracks.self,
+                        completion: completion)
+    }
 }

@@ -40,6 +40,12 @@ class LibraryController: BaseController {
         return c
     }()
     
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        return refreshControl
+    }()
+    
     private lazy var indicatorview: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .large)
         view.style = .medium
@@ -61,6 +67,10 @@ class LibraryController: BaseController {
         navigationController?.navigationBar.isHidden = false
     }
     
+    @objc private func refreshData() {
+        viewModel.getAllData()
+    }
+    
     override func setupUI() {
         view.backgroundColor = .clear
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -68,6 +78,7 @@ class LibraryController: BaseController {
         [indicatorview,
          collection].forEach { view.addSubview($0) }
         indicatorview.frame = view.bounds
+        collection.refreshControl = refreshControl
     }
     
     override func setupConstraints() {
@@ -86,9 +97,11 @@ class LibraryController: BaseController {
                 self.indicatorview.startAnimating()
             case .loaded:
                 self.indicatorview.stopAnimating()
+                self.refreshControl.endRefreshing()
             case .success:
                 self.collection.reloadData()
             case .error(let error):
+                self.refreshControl.endRefreshing()
                 self.showAlert(message: error)
             case .idle:
                 break
@@ -101,8 +114,10 @@ extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegat
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if viewModel.section == .playlists {
             return viewModel.playlists.count
-        } else {
+        } else if viewModel.section == .albums {
             return viewModel.albums.count
+        } else {
+            return viewModel.tracks.count
         }
     }
     
@@ -111,9 +126,13 @@ extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegat
         if viewModel.section == .playlists {
             cell.configure(model: viewModel.playlists[indexPath.item],
                            type: .album)
-        } else {
+        } else if viewModel.section == .albums {
             cell.configure(model: viewModel.albums[indexPath.item],
                            type: .album)
+        } else {
+            guard let data = viewModel.tracks[indexPath.item].track else { return cell }
+            cell.configure(model: data,
+                           type: .track)
         }
         return cell
     }
@@ -142,10 +161,13 @@ extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegat
             let coordinator = PlaylistCoordinator(navigationController: navigationController ?? UINavigationController(),
                                                   id: viewModel.playlists[indexPath.item].id ?? "")
             coordinator.start()
-        } else {
+        } else if viewModel.section == .albums {
             let coordinator = AlbumCoordinator(navigationController: self.navigationController ?? UINavigationController(),
                                                id: viewModel.albums[indexPath.item].album?.id ?? "")
             coordinator.start()
+        } else {
+            guard let track = viewModel.tracks[indexPath.item].track else { return }
+            PlaybackPresenter.shared.startPlayback(from: self, track: track)
         }
     }
 }
