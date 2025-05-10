@@ -35,4 +35,17 @@ final class PlaylistManager: PlaylistUseCase {
                         encodingType: .json,
                         completion: completion)
     }
+    
+    func editPlaylistName(id: String, name: String, completion: @escaping ((Empty?, String?) -> Void)) {
+        let path = PlaylistEndpoint.editPlaylistName(id: id).path
+        let params: [String: Any] = ["name": "\(name)",
+                                     "description": "New playlist description",
+                                     "public": false]
+        manager.request(path: path,
+                        model: Empty.self,
+                        method: .put,
+                        params: params,
+                        encodingType: .json,
+                        completion: completion)
+    }
 }

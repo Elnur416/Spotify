@@ -30,4 +30,43 @@ final class LibraryManager: LibraryUseCase {
                         model: SavedTracks.self,
                         completion: completion)
     }
+    
+    func createPlaylist(name: String, userId: String, completion: @escaping((PlaylistItem?, String?) -> Void)) {
+        let path = LibraryEndpoint.createPlaylist(id: userId).path
+        let params: [String: Any] = ["name": "\(name)",
+                                     "description": "New playlist description",
+                                     "public": false]
+        manager.request(path: path,
+                        model: PlaylistItem.self,
+                        method: .post,
+                        params: params,
+                        encodingType: .json,
+                        completion: completion)
+    }
+    
+    func deleteAlbum(id: String, completion: @escaping((Empty?, String?) -> Void)) {
+        let path = LibraryEndpoint.deleteAlbum.path
+        let params: [String: Any] = ["ids": [
+            "\(id)"
+        ]]
+        manager.request(path: path,
+                        model: Empty.self,
+                        method: .delete,
+                        params: params,
+                        encodingType: .json,
+                        completion: completion)
+    }
+    
+    func deleteTrack(id: String, completion: @escaping((Empty?, String?) -> Void)) {
+        let path = LibraryEndpoint.deleteTrack.path
+        let params: [String: Any] = ["ids": [
+            "\(id)"
+        ]]
+        manager.request(path: path,
+                        model: Empty.self,
+                        method: .delete,
+                        params: params,
+                        encodingType: .json,
+                        completion: completion)
+    }
 }

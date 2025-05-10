@@ -39,6 +39,8 @@ class PlaylistController: BaseController {
         return view
     }()
     
+    private var loadingView: UIView?
+    
 //    MARK: - Properties
     
     private let viewModel: PlaylistViewModel
@@ -109,13 +111,50 @@ class PlaylistController: BaseController {
     
     private func configureData() {
         guard let data = viewModel.playlist,
-        let header = table.tableHeaderView as? TableHeaderView else { return }
+              let header = table.tableHeaderView as? TableHeaderView else { return }
         header.configure(model: data, type: .playlist)
+        header.editActionHandler = { [weak self] in
+            let controller = EditPlaylistController()
+            controller.configureData(imageURL: self?.viewModel.playlist?.images?.first?.url ?? "",
+                                     playlistName: self?.viewModel.playlist?.name ?? "")
+            controller.saveActionCallBack = { [weak self] name in
+                self?.showLoading(duration: 20)
+                self?.viewModel.saveChanges(name: name)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                    self?.table.reloadData()
+                }
+            }
+            self?.present(controller, animated: true)
+        }
     }
     
     @objc private func backAction() {
         navigationController?.popViewController(animated: true)
         navigationController?.navigationBar.isHidden = false
+    }
+    
+    private func showLoading(duration: TimeInterval = 40.0) {
+        let loading = UIView(frame: view.bounds)
+        loading.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.center = loading.center
+        indicator.startAnimating()
+        
+        loading.addSubview(indicator)
+        view.addSubview(loading)
+        
+        loadingView = loading
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            self.hideLoading()
+        }
+    }
+    
+    private func hideLoading() {
+        loadingView?.removeFromSuperview()
+        loadingView = nil
     }
 }
 

@@ -45,4 +45,17 @@ final class PlaylistViewModel {
             }
         }
     }
+    
+    func saveChanges(name: String) {
+        self.state = .loading
+        useCase.editPlaylistName(id: playlistID,
+                                 name: name) { data, error in
+            if data == nil {
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
 }

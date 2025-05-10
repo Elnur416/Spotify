@@ -43,13 +43,14 @@ class LibraryHeaderView: UICollectionReusableView {
         b.tintColor = .white
         b.backgroundColor = UIColor(named: "green2")
         b.titleLabel?.font = .systemFont(ofSize: 13, weight: .regular)
+        b.addTarget(self, action: #selector(addPlaylistAction), for: .touchUpInside)
         b.translatesAutoresizingMaskIntoConstraints = false
         return b
     }()
     
 //    MARK: - Properties
     var sectionCallBack: ((LibrarySectionNames) -> Void)?
-    
+    var addPlaylistCallBack: (() -> Void)?
     private var sectionModels: [LibrarySectionModel] = [.init(name: .playlists, isSelected: true),
                                                         .init(name: .albums, isSelected: false),
                                                         .init(name: .tracks, isSelected: false)]
@@ -84,6 +85,10 @@ class LibraryHeaderView: UICollectionReusableView {
             button.heightAnchor.constraint(equalToConstant: 30),
             button.widthAnchor.constraint(equalToConstant: 100)
         ])
+    }
+    
+    @objc private func addPlaylistAction() {
+        addPlaylistCallBack?()
     }
 }
 

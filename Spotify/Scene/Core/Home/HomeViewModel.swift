@@ -66,6 +66,7 @@ final class HomeViewModel {
         userUseCase.getCurrentUserProfile { data, error in
             if let data {
                 self.user = data
+                UserDefaults.standard.set(data.id, forKey: "userID")
                 self.state = .loaded
                 self.state = .success
             } else if let error {

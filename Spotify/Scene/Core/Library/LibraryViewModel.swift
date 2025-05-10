@@ -80,4 +80,45 @@ final class LibraryViewModel {
             }
         }
     }
+    
+    func createPlaylist(name: String) {
+        guard let userID = UserDefaults.standard.string(forKey: "userID") else { return }
+        self.state = .loading
+        useCase.createPlaylist(name: name,
+                               userId: userID) { data, error in
+            if let data {
+                self.playlists.insert(data, at: 0)
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    func deleteAlbumFromLibrary(id: String) {
+        self.state = .loading
+        useCase.deleteAlbum(id: id) { data, error in
+            if data == nil {
+                self.albums.removeAll { $0.itemId == id }
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    func deleteTrackFromLibrary(id: String) {
+        self.state = .loading
+        useCase.deleteAlbum(id: id) { data, error in
+            if data == nil {
+                self.tracks.removeAll { $0.track?.id ?? "" == id }
+                self.state = .loaded
+                self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
 }

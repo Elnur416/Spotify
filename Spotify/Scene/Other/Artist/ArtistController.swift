@@ -42,7 +42,6 @@ class ArtistController: BaseController {
 //    MARK: - Properties
     
     private let viewModel: ArtistViewModel
-    private var alpha = CGFloat(1)
     
     init(viewModel: ArtistViewModel) {
         self.viewModel = viewModel

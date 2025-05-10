@@ -20,7 +20,7 @@ class LibraryController: BaseController {
         fatalError("init(coder:) has not been implemented")
     }
     
-//    MARK: UI elements
+    //    MARK: UI elements
     
     private lazy var collection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -53,11 +53,11 @@ class LibraryController: BaseController {
         return view
     }()
     
-//    MARK: - Life cycle
-
+    //    MARK: - Life cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         viewModel.getAllData()
     }
     
@@ -79,6 +79,9 @@ class LibraryController: BaseController {
          collection].forEach { view.addSubview($0) }
         indicatorview.frame = view.bounds
         collection.refreshControl = refreshControl
+        let gesture = UILongPressGestureRecognizer(target: self,
+                                                   action: #selector(didLongPress(_:)))
+        collection.addGestureRecognizer(gesture)
     }
     
     override func setupConstraints() {
@@ -106,6 +109,52 @@ class LibraryController: BaseController {
             case .idle:
                 break
             }
+        }
+    }
+    
+    @objc func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else {
+            return
+        }
+        let touchPoint = gesture.location(in: collection)
+        guard let indexPath = collection.indexPathForItem(at: touchPoint) else { return }
+        
+        if viewModel.section == .albums {
+            let albumToDelete = viewModel.albums[indexPath.item]
+            let actionSheet = UIAlertController(
+                title: albumToDelete.nameText,
+                message: "Would you like to remove this from the library?",
+                preferredStyle: .actionSheet
+            )
+            actionSheet.addAction(UIAlertAction(title: "Cancel",
+                                                style: .cancel,
+                                                handler: nil))
+            actionSheet.addAction(UIAlertAction(title: "Remove",
+                                                style: .destructive,
+                                                handler: { [weak self] _ in
+                self?.viewModel.deleteAlbumFromLibrary(id: albumToDelete.itemId)
+            }))
+            present(actionSheet,
+                    animated: true,
+                    completion: nil)
+        } else if viewModel.section == .tracks {
+            let trackToDelete = viewModel.tracks[indexPath.item]
+            let actionSheet = UIAlertController(
+                title: trackToDelete.track?.name ?? "",
+                message: "Would you like to remove this from the library?",
+                preferredStyle: .actionSheet
+            )
+            actionSheet.addAction(UIAlertAction(title: "Cancel",
+                                                style: .cancel,
+                                                handler: nil))
+            actionSheet.addAction(UIAlertAction(title: "Remove",
+                                                style: .destructive,
+                                                handler: { [weak self] _ in
+                self?.viewModel.deleteTrackFromLibrary(id: trackToDelete.track?.id ?? "")
+            }))
+            present(actionSheet,
+                    animated: true,
+                    completion: nil)
         }
     }
 }
@@ -144,6 +193,13 @@ extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegat
         header.sectionCallBack = { [weak self] title in
             self?.viewModel.section = title
             self?.collection.reloadData()
+        }
+        header.addPlaylistCallBack = { [weak self] in
+            let controller = CreatePlaylistController()
+            self?.present(controller, animated: true)
+            controller.createPlaylistCallBack = { [weak self] name in
+                self?.viewModel.createPlaylist(name: name)
+            }
         }
         return header
     }

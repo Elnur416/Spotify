@@ -78,7 +78,7 @@ class AddToPlaylistController: BaseController {
             table.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
+            cancelButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
             cancelButton.heightAnchor.constraint(equalToConstant: 32),
             cancelButton.widthAnchor.constraint(equalToConstant: 100)
         ])
