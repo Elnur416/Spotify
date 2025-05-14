@@ -63,10 +63,10 @@ class SettingsCell: UITableViewCell {
     }
     
     func configure(model: SettingsModel) {
-        if model.title == "Log out" {
+        if model.title == .logOut {
             name.textColor = .red
         }
         image.image = UIImage(systemName: model.imageName)
-        name.text = model.title
+        name.text = model.title.rawValue
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 struct SnapshotResponse: Codable {
-    let snapshotID: String?
+    var snapshotID: String?
     
     enum CodingKeys: String, CodingKey {
         case snapshotID = "snapshot_id"

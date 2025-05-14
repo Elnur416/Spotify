@@ -36,7 +36,7 @@ class AuthController: BaseController {
     }
     
     override func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .black
         view.addSubview(webView)
         webView.frame = view.bounds
         configureWebView()

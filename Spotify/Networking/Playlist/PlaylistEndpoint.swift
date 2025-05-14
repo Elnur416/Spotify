@@ -12,6 +12,7 @@ enum PlaylistEndpoint {
     case userPlaylists
     case addToPlaylist(id: String)
     case editPlaylistName(id: String)
+    case removeFromPlaylist(id: String)
     
     var path: String {
         switch self {
@@ -23,6 +24,8 @@ enum PlaylistEndpoint {
             return NetworkHelper.shared.configureURL(endpoint: "/playlists/\(id)/tracks")
         case .editPlaylistName(let id):
             return NetworkHelper.shared.configureURL(endpoint: "/playlists/\(id)")
+        case .removeFromPlaylist(let id):
+            return NetworkHelper.shared.configureURL(endpoint: "/playlists/\(id)/tracks")
         }
     }
 }

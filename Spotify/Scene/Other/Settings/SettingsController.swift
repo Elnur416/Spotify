@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol SettingsProtocol: AnyObject {
+    func didTapLogout()
+}
+
 class SettingsController: BaseController {
     
 //    MARK: UI elements
@@ -42,6 +46,7 @@ class SettingsController: BaseController {
 //    MARK: - Properties
     
     private let viewModel: SettingsViewModel
+    var delegate: SettingsProtocol?
     
     init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
@@ -101,5 +106,13 @@ extension SettingsController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "\(SettingsCell.self)", for: indexPath) as! SettingsCell
         cell.configure(model: viewModel.items[indexPath.item])
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if viewModel.items[indexPath.item].title == .logOut {
+            dismiss(animated: true) { [weak self] in
+                self?.delegate?.didTapLogout()
+            }
+        }
     }
 }

@@ -161,11 +161,12 @@ class HomeController: BaseController {
 
         if let sheet = navController.sheetPresentationController {
             sheet.detents = [
-                .custom { _ in return 200 }
+                .custom { _ in return 150 }
             ]
             sheet.prefersGrabberVisible = true
             sheet.preferredCornerRadius = 20
         }
+        controller.delegate = self
 
         present(navController, animated: true)
     }
@@ -274,5 +275,21 @@ extension HomeController: UICollectionViewDataSource, UICollectionViewDelegate, 
         default:
             break
         }
+    }
+}
+
+extension HomeController: SettingsProtocol {
+    func didTapLogout() {
+        let alert = UIAlertController(title: "LogOut",
+                                      message: "Do you want to logout?",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Logout", style: .destructive) { [weak self] _ in
+            AuthManager.shared.logout()
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            guard let sceneDelegate = windowScene.delegate as? SceneDelegate else { return }
+            sceneDelegate.welcomeRoot()
+        })
+        present(alert, animated: true)
     }
 }

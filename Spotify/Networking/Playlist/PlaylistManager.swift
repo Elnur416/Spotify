@@ -48,4 +48,20 @@ final class PlaylistManager: PlaylistUseCase {
                         encodingType: .json,
                         completion: completion)
     }
+    
+    func removeItemsFromPlaylist(id: String, uris: String, snapshotId: String, completion: @escaping ((SnapshotResponse?, String?) -> Void)) {
+        let path = PlaylistEndpoint.removeFromPlaylist(id: id).path
+        let params: [String: Any] = [
+            "tracks": [
+                ["uri": uris]
+            ],
+            "snapshot_id": snapshotId
+        ]
+        manager.request(path: path,
+                        model: SnapshotResponse.self,
+                        method: .delete,
+                        params: params,
+                        encodingType: .json,
+                        completion: completion)
+    }
 }

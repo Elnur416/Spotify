@@ -20,8 +20,8 @@ struct Playlist: Codable, HeaderProtocol {
     let owner: Owner2?
     let primaryColor: String?
     let playlistPublic: Bool?
-    let snapshotID: String?
-    let tracks: Tracks4?
+    var snapshotID: String?
+    var tracks: Tracks4?
     let type, uri: String?
     
     var mainImage: String {
@@ -71,7 +71,7 @@ struct Owner2: Codable {
 // MARK: - Tracks
 struct Tracks4: Codable {
     let href: String?
-    let items: [Item]?
+    var items: [Item]?
     let limit: Int?
     let next: String?
     let offset: Int?

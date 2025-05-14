@@ -11,6 +11,7 @@ final class PlaylistViewModel {
     private(set) var playlistID: String
     private var useCase: PlaylistUseCase
     private(set) var playlist: Playlist?
+    var tracks = [Item]()
     
     init(playlistID: String, useCase: PlaylistUseCase) {
         self.playlistID = playlistID
@@ -37,7 +38,9 @@ final class PlaylistViewModel {
         self.state = .loading
         useCase.getPlaylist(id: playlistID) { data, error in
             if let data {
+                print(data.primaryColor ?? "")
                 self.playlist = data
+                self.tracks = data.tracks?.items ?? []
                 self.state = .loaded
                 self.state = .success
             } else if let error {
@@ -53,6 +56,18 @@ final class PlaylistViewModel {
             if data == nil {
                 self.state = .loaded
                 self.state = .success
+            } else if let error {
+                self.state = .error(error)
+            }
+        }
+    }
+    
+    func removeTrackFromPlaylist(at index: Int) {
+        useCase.removeItemsFromPlaylist(id: playlistID,
+                                        uris: tracks[index].track?.uri ?? "",
+                                        snapshotId: playlist?.snapshotID ?? "") { data, error in
+            if let data {
+                print(data)
             } else if let error {
                 self.state = .error(error)
             }
