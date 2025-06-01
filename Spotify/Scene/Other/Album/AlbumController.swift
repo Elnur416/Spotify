@@ -56,8 +56,10 @@ class AlbumController: BaseController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        viewModel.getAlbum()
+        
+        Task {
+            await viewModel.getAlbum()
+        }
         configureHeaderView()
     }
     
@@ -106,7 +108,9 @@ class AlbumController: BaseController {
         let header = TableHeaderView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 370))
         table.tableHeaderView = header
         header.saveActionHandler = { [weak self] in
-            self?.viewModel.saveAlbum()
+            Task {
+                await self?.viewModel.saveAlbum()
+            }
         }
     }
     
@@ -161,7 +165,9 @@ extension AlbumController: AddControllerDelegate {
     }
     
     func saveTrack() {
-        viewModel.saveTrackToLibrary(trackID: viewModel.selectedTrack?.id ?? "")
+        Task {
+            await viewModel.saveTrackToLibrary(trackID: viewModel.selectedTrack?.id ?? "")
+        }
     }
 }
 

@@ -10,17 +10,16 @@ import Foundation
 final class SearchManager: SearchUseCase {
     private let manager = NetworkManager()
     
-    func search(query: String, completion: @escaping ((SearchResults?, String?) -> Void)) {
+    func search(query: String) async throws -> SearchResults? {
         let path = SearchEndpoint.search(text: query).path
-        manager.request(path: path,
-                        model: SearchResults.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                                         model: SearchResults.self)
     }
     
-    func getCategories(completion: @escaping ((Categories?, String?) -> Void)) {
+    func getCategories() async throws -> Categories? {
         let path = SearchEndpoint.category.path
-        manager.request(path: path,
-                        model: Categories.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                                         model: Categories.self)
     }
+    
 }

@@ -56,7 +56,9 @@ class SearchController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        viewModel.getCategories()
+        Task {
+            await viewModel.getCategories()
+        }
     }
     
     override func setupUI() {
@@ -120,7 +122,9 @@ extension SearchController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let resultsController = searchController.searchResultsController as? SearchResultsController,
               let query = searchController.searchBar.text else { return }
-        viewModel.getSearchResults(query: query)
+        Task {
+            await viewModel.getSearchResults(query: query)
+        }
         guard let data = viewModel.searchResults else { return }
         resultsController.updateData(items: data)
         resultsController.artistIDCallback = { [weak self] id in

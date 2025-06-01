@@ -59,7 +59,9 @@ class PlaylistController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getPlaylist()
+        Task {
+            await viewModel.getPlaylist()
+        }
         configureHeaderView()
     }
     
@@ -119,7 +121,9 @@ class PlaylistController: BaseController {
                                      playlistName: self?.viewModel.playlist?.name ?? "")
             controller.saveActionCallBack = { [weak self] name in
                 self?.showLoading(duration: 20)
-                self?.viewModel.saveChanges(name: name)
+                Task {
+                    await self?.viewModel.saveChanges(name: name)
+                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
                     self?.table.reloadData()
@@ -176,7 +180,13 @@ extension PlaylistController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            viewModel.removeTrackFromPlaylist(at: indexPath.item)
+            Task {
+//                print(viewModel.tracks.first?.track?.name)
+//                print(viewModel.tracks[indexPath.row].track?.name ?? "")
+//                await viewModel.removeTrackFromPlaylist(uri: viewModel.tracks[indexPath.row].track?.uri ?? "",
+//                                                        snapshotID: viewModel.playlist?.snapshotID ?? "")
+            }
+            print(viewModel.tracks[indexPath.row].track?.name ?? "")
             viewModel.tracks.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }

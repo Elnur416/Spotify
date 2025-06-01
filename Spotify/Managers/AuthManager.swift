@@ -174,3 +174,13 @@ final class AuthManager {
         UserDefaults.standard.removeObject(forKey: "expirationDate")
     }
 }
+
+extension AuthManager {
+    func validToken() async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            self.withValidToken { token in
+                continuation.resume(returning: token)
+            }
+        }
+    }
+}

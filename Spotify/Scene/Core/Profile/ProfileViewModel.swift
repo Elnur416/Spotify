@@ -33,49 +33,64 @@ final class ProfileViewModel {
         }
     }
     
-    func getAllData() {
-        getCurrentUser()
-        getUserPlaylists()
-        getFollowedArtists()
+    func getAllData() async {
+        await getCurrentUser()
+        await getUserPlaylists()
+        await getFollowedArtists()
     }
     
-    private func getCurrentUser() {
-        state = .loading
-        useCase.getCurrentUserProfile { data, error in
-            if let data {
-                self.user = data
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getCurrentUser() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getCurrentUserProfile()
+            self.user = data
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func getFollowedArtists() {
-        state = .loading
-        useCase.getFollowedArtists { data, error in
-            if let data {
-                guard let items = data.artists?.items else { return }
-                self.artists = items
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getFollowedArtists() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getFollowedArtists()
+            guard let items = data?.artists?.items else { return }
+            self.artists = items
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func getUserPlaylists() {
-        state = .loading
-        useCase.getUserPlaylists { data, error in
-            if let data {
-                guard let items = data.items else { return }
-                self.playlists = items
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getUserPlaylists() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getUserPlaylists()
+            guard let items = data?.items else { return }
+            self.playlists = items
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }

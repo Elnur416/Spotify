@@ -59,7 +59,9 @@ class AddToPlaylistController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        viewModel.getUserPlaylists()
+        Task {
+            await viewModel.getUserPlaylists()
+        }
     }
     
     override func setupUI() {
@@ -122,7 +124,9 @@ extension AddToPlaylistController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.addTrackToPlaylist(withId: viewModel.playlists[indexPath.item].id ?? "")
+        Task {
+            await viewModel.addTrackToPlaylist(withId: viewModel.playlists[indexPath.item].id ?? "")
+        }
         DispatchQueue.main.async {
             self.dismiss(animated: true)
         }

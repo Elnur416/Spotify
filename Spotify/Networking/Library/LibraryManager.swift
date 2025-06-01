@@ -10,63 +10,57 @@ import Foundation
 final class LibraryManager: LibraryUseCase {
     private let manager = NetworkManager()
     
-    func getUserPlaylists(completion: @escaping (Playlists?, String?) -> Void) {
+    func getUserPlaylists() async throws -> Playlists? {
         let path = LibraryEndpoint.playlist.path
-        manager.request(path: path,
-                        model: Playlists.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: Playlists.self)
     }
     
-    func getUserSavedAlbums(completion: @escaping (Albums2?, String?) -> Void) {
+    func getUserSavedAlbums() async throws -> Albums2? {
         let path = LibraryEndpoint.album.path
-        manager.request(path: path,
-                        model: Albums2.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: Albums2.self)
     }
     
-    func getUserSavedTracks(completion: @escaping (SavedTracks?, String?) -> Void) {
+    func getUserSavedTracks() async throws -> SavedTracks? {
         let path = LibraryEndpoint.track.path
-        manager.request(path: path,
-                        model: SavedTracks.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: SavedTracks.self)
     }
     
-    func createPlaylist(name: String, userId: String, completion: @escaping((PlaylistItem?, String?) -> Void)) {
+    func createPlaylist(name: String, userId: String) async throws -> PlaylistItem? {
         let path = LibraryEndpoint.createPlaylist(id: userId).path
         let params: [String: Any] = ["name": "\(name)",
                                      "description": "New playlist description",
                                      "public": false]
-        manager.request(path: path,
+        return try await manager.request(path: path,
                         model: PlaylistItem.self,
                         method: .post,
                         params: params,
-                        encodingType: .json,
-                        completion: completion)
+                        encodingType: .json)
     }
     
-    func deleteAlbum(id: String, completion: @escaping((Empty?, String?) -> Void)) {
+    func deleteAlbum(id: String) async throws -> Empty? {
         let path = LibraryEndpoint.deleteAlbum.path
         let params: [String: Any] = ["ids": [
             "\(id)"
         ]]
-        manager.request(path: path,
+        return try await manager.request(path: path,
                         model: Empty.self,
                         method: .delete,
                         params: params,
-                        encodingType: .json,
-                        completion: completion)
+                        encodingType: .json)
     }
     
-    func deleteTrack(id: String, completion: @escaping((Empty?, String?) -> Void)) {
+    func deleteTrack(id: String) async throws -> Empty? {
         let path = LibraryEndpoint.deleteTrack.path
         let params: [String: Any] = ["ids": [
             "\(id)"
         ]]
-        manager.request(path: path,
+        return try await manager.request(path: path,
                         model: Empty.self,
                         method: .delete,
                         params: params,
-                        encodingType: .json,
-                        completion: completion)
+                        encodingType: .json)
     }
 }

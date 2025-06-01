@@ -32,29 +32,39 @@ final class SearchViewModel {
         }
     }
     
-    func getSearchResults(query: String) {
-        self.state = .loading
-        useCase.search(query: query) { data, error in
-            if let data {
-                self.searchResults = data
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    func getSearchResults(query: String) async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.search(query: query)
+            self.searchResults = data
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    func getCategories() {
-        self.state = .loading
-        useCase.getCategories { data, error in
-            if let data {
-                guard let items = data.categories?.items else { return }
-                self.categories = items
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    func getCategories() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getCategories()
+            guard let items = data?.categories?.items else { return }
+            self.categories = items
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }

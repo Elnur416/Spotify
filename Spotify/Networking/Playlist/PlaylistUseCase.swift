@@ -8,9 +8,9 @@
 import Foundation
 
 protocol PlaylistUseCase {
-    func getPlaylist(id: String, completion: @escaping ((Playlist?, String?) -> Void))
-    func getUserPlaylists(completion: @escaping((Playlists?, String?) -> Void))
-    func addItemsToPlaylist(id: String, uris: String, completion: @escaping ((SnapshotResponse?, String?) -> Void))
-    func editPlaylistName(id: String, name: String, completion: @escaping ((Empty?, String?) -> Void))
-    func removeItemsFromPlaylist(id: String, uris: String, snapshotId: String, completion: @escaping ((SnapshotResponse?, String?) -> Void))
+    func getPlaylist(id: String) async throws -> Playlist?
+    func getUserPlaylists() async throws -> Playlists?
+    func addItemsToPlaylist(id: String, uris: String) async throws -> SnapshotResponse?
+    func editPlaylistName(id: String, name: String) async throws -> Empty?
+    func removeItemsFromPlaylist(id: String, uris: String, snapshotId: String) async throws -> SnapshotResponse?
 }

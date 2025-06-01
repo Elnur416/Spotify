@@ -38,86 +38,122 @@ final class ArtistViewModel {
         }
     }
     
-    func getAllData() {
-        getArtistInfo()
-        getArtistToptracks()
-        checkFollowStatus()
+    func getAllData() async {
+        await getArtistInfo()
+        await getArtistToptracks()
+        await checkFollowStatus()
     }
     
-    private func getArtistInfo() {
-        self.state = .loading
-        useCase.getArtistInfo(id: actorID) { data, error in
-            if let data {
-                self.artist = data
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getArtistInfo() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getArtistInfo(id: actorID)
+            self.artist = data
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func getArtistToptracks() {
-        self.state = .loading
-        useCase.getArtistTopTracks(id: actorID) { data, error in
-            if let data {
-                guard let items = data.tracks else { return }
-                self.artistTopTracks = items
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getArtistToptracks() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getArtistTopTracks(id: actorID)
+            guard let items = data?.tracks else { return }
+            self.artistTopTracks = items
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func checkFollowStatus() {
-        self.state = .loading
-        useCase.checkFollowStatus(id: actorID) { data, error in
-            if let data {
-                self.isArtistFollowing = data
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func checkFollowStatus() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.checkFollowStatus(id: actorID)
+            self.isArtistFollowing = data
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    func followArtist() {
-        self.state = .loading
-        useCase.followArtist(id: actorID) { data, error in
-            if data != nil {
-                self.isArtistFollowing = [true]
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
-            }
+    func followArtist() async {
+        await MainActor.run {
+            state = .loading
         }
-    }
-    
-    func unfollowArtist() {
-        self.state = .loading
-        useCase.unfollowArtist(id: actorID) { data, error in
-            if data != nil {
-                self.isArtistFollowing = [false]
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
-            }
-        }
-    }
-    
-    func saveTrackToLibrary(trackID: String) {
-        self.state = .loading
-        trackUseCase.saveTrack(id: trackID) { data, error in
+        do {
+            let data = try await useCase.followArtist(id: actorID)
             if data == nil {
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+                self.isArtistFollowing = [true]
+                await MainActor.run {
+                    state = .loaded
+                    state = .success
+                }
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
+            }
+        }
+    }
+    
+    func unfollowArtist() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.unfollowArtist(id: actorID)
+            if data == nil {
+                self.isArtistFollowing = [false]
+                await MainActor.run {
+                    state = .loaded
+                    state = .success
+                }
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
+            }
+        }
+    }
+    
+    func saveTrackToLibrary(trackID: String) async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await trackUseCase.saveTrack(id: trackID)
+            if data == nil {
+                await MainActor.run {
+                    state = .loaded
+                    state = .success
+                }
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }

@@ -10,31 +10,27 @@ import Foundation
 final class HomeManager: HomeUseCase {
     private let manager = NetworkManager()
     
-    func getNewRelease(completion: @escaping ((Albums?, String?) -> Void)) {
+    func getNewRelease() async throws -> Albums? {
         let path = HomeEndpoint.newReleases.path
-        manager.request(path: path,
-                        model: Albums.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: Albums.self)
     }
     
-    func getTopArtists(completion: @escaping ((ArtistsClass?, String?) -> Void)) {
+    func getTopArtists() async throws -> ArtistsClass? {
         let path = HomeEndpoint.artists.path
-        manager.request(path: path,
-                        model: ArtistsClass.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: ArtistsClass.self)
     }
     
-    func getTopTracks(completion: @escaping ((Tracks?, String?) -> Void)) {
+    func getTopTracks() async throws -> Tracks? {
         let path = HomeEndpoint.tracks.path
-        manager.request(path: path,
-                        model: Tracks.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: Tracks.self)
     }
     
-    func getRecentlyTracks(completion: @escaping ((RecentlyTracks?, String?) -> Void)) {
+    func getRecentlyTracks() async throws -> RecentlyTracks? {
         let path = HomeEndpoint.recentlyTracks.path
-        manager.request(path: path,
-                        model: RecentlyTracks.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: RecentlyTracks.self)
     }
 }

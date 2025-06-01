@@ -8,9 +8,9 @@
 import Foundation
 
 protocol ArtistUseCase {
-    func getArtistInfo(id: String, completion: @escaping ((ArtistInfo?, String?) -> Void))
-    func getArtistTopTracks(id: String, completion: @escaping ((ArtistTopTracks?, String?) -> Void))
-    func checkFollowStatus(id: String, completion: @escaping (([Bool]?, String?) -> Void))
-    func followArtist(id: String, completion: @escaping ((Empty?, String?) -> Void))
-    func unfollowArtist(id: String, completion: @escaping ((Empty?, String?) -> Void))
+    func getArtistInfo(id: String) async throws -> ArtistInfo?
+    func getArtistTopTracks(id: String) async throws -> ArtistTopTracks?
+    func checkFollowStatus(id: String) async throws -> [Bool]?
+    func followArtist(id: String) async throws -> Empty?
+    func unfollowArtist(id: String) async throws -> Empty?
 }

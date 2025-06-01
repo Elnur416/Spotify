@@ -163,7 +163,9 @@ class ProfileController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getAllData()
+        Task {
+            await viewModel.getAllData()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

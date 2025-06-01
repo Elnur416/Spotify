@@ -37,39 +37,58 @@ final class AlbumViewModel {
         }
     }
     
-    func getAlbum() {
-        self.state = .loading
-        useCase.getAlbum(id: id) { data, error in
-            if let data {
-                self.album = data
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    func getAlbum() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getAlbum(id: id)
+            self.album = data
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    func saveAlbum() {
-        self.state = .loading
-        useCase.saveAlbum(id: album?.id ?? "") { data, error in
+    func saveAlbum() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.saveAlbum(id: id)
             if data == nil {
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+                await MainActor.run {
+                    state = .loaded
+                    state = .success
+                }
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    func saveTrackToLibrary(trackID: String) {
-        self.state = .loading
-        trackUseCase.saveTrack(id: trackID) { data, error in
+    func saveTrackToLibrary(trackID: String) async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await trackUseCase.saveTrack(id: id)
             if data == nil {
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+                await MainActor.run {
+                    state = .loaded
+                    state = .success
+                }
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }

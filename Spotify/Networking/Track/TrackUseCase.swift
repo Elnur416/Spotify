@@ -8,5 +8,5 @@
 import Foundation
 
 protocol TrackUseCase: AnyObject {
-    func saveTrack(id: String, completion: @escaping ((Empty?, String?) -> Void))
+    func saveTrack(id: String) async throws -> Empty?
 }

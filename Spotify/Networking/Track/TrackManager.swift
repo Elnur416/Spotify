@@ -10,16 +10,15 @@ import Foundation
 final class TrackManager: TrackUseCase {
     private let manager = NetworkManager()
     
-    func saveTrack(id: String, completion: @escaping (Empty?, String?) -> Void) {
+    func saveTrack(id: String) async throws -> Empty? {
         let path = TrackEndpoint.saveTrack.path
         let params: [String: Any] = ["ids": [
             "\(id)"
         ]]
-        manager.request(path: path,
+        return try await manager.request(path: path,
                         model: Empty.self,
                         method: .put,
                         params: params,
-                        encodingType: .json,
-                        completion: completion)
+                        encodingType: .json)
     }
 }

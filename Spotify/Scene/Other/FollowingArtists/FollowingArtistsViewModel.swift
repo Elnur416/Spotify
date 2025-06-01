@@ -17,14 +17,17 @@ final class FollowingArtistsViewModel {
         self.useCase = useCase
     }
     
-    func getFollowingArtists() {
-        useCase.getFollowedArtists { data, error in
-            if let data {
-                guard let items = data.artists?.items else { return }
-                self.artists = items
-                self.success?()
-            } else if let error {
-                self.error?(error)
+    func getFollowingArtists() async {
+        do {
+            let data = try await useCase.getFollowedArtists()
+            guard let items = data?.artists?.items else { return }
+            self.artists = items
+            await MainActor.run {
+                success?()
+            }
+        } catch {
+            await MainActor.run {
+                self.error?(error.localizedDescription)
             }
         }
     }

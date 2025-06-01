@@ -8,6 +8,6 @@
 import Foundation
 
 protocol AlbumUseCase {
-    func getAlbum(id: String, completion: @escaping ((Album6?, String?) -> Void))
-    func saveAlbum(id: String, completion: @escaping ((Empty?, String?) -> Void))
+    func getAlbum(id: String) async throws -> Album6?
+    func saveAlbum(id: String) async throws -> Empty?
 }

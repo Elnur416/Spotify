@@ -43,11 +43,15 @@ class FollowingArtistsController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        viewModel.getFollowingArtists()
+        Task {
+            await viewModel.getFollowingArtists()
+        }
     }
     
     @objc private func refreshData() {
-        viewModel.getFollowingArtists()
+        Task {
+            await viewModel.getFollowingArtists()
+        }
     }
     
     override func setupUI() {

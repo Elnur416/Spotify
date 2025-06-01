@@ -8,8 +8,8 @@
 import Foundation
 
 protocol HomeUseCase {
-    func getNewRelease(completion: @escaping ((Albums?, String?) -> Void))
-    func getTopArtists(completion: @escaping ((ArtistsClass?, String?) -> Void))
-    func getTopTracks(completion: @escaping ((Tracks?, String?) -> Void))
-    func getRecentlyTracks(completion: @escaping ((RecentlyTracks?, String?) -> Void))
+    func getNewRelease() async throws -> Albums?
+    func getTopArtists() async throws -> ArtistsClass?
+    func getTopTracks() async throws -> Tracks?
+    func getRecentlyTracks() async throws -> RecentlyTracks?
 }

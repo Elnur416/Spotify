@@ -33,29 +33,38 @@ final class AddToPlaylistControllerViewModel {
         }
     }
     
-    func getUserPlaylists() {
-        state = .loading
-        useCase.getUserPlaylists { data, error in
-            if let data {
-                guard let items = data.items else { return }
-                self.playlists = items
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    func getUserPlaylists() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getUserPlaylists()
+            guard let items = data?.items else { return }
+            self.playlists = items
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    func addTrackToPlaylist(withId playlistId: String) {
-        state = .loading
-        useCase.addItemsToPlaylist(id: playlistId, uris: trackURI ?? "") { data, error in
-            if let data {
-                print(data)
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    func addTrackToPlaylist(withId playlistId: String) async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.addItemsToPlaylist(id: playlistId, uris: trackURI ?? "")
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }

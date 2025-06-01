@@ -8,6 +8,6 @@
 import Foundation
 
 protocol SearchUseCase {
-    func search(query: String, completion: @escaping ((SearchResults?, String?) -> Void))
-    func getCategories(completion: @escaping ((Categories?, String?) -> Void))
+    func search(query: String) async throws -> SearchResults?
+    func getCategories() async throws -> Categories?
 }

@@ -57,7 +57,9 @@ class ArtistController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getAllData()
+        Task {
+            await viewModel.getAllData()
+        }
         configureTableHeader()
     }
     
@@ -107,10 +109,14 @@ class ArtistController: BaseController {
         let header = table.tableHeaderView as? ArtistTableHeaderView else { return }
         header.configure(model: data, isFollowing: viewModel.isArtistFollowing?.first ?? false)
         header.followCallback = { [weak self] in
-            self?.viewModel.followArtist()
+            Task {
+                await self?.viewModel.followArtist()
+            }
         }
         header.unfollowCallback = { [weak self] in
-            self?.viewModel.unfollowArtist()
+            Task {
+                await self?.viewModel.unfollowArtist()
+            }
         }
     }
     
@@ -164,6 +170,8 @@ extension ArtistController: AddControllerDelegate {
     
     func saveTrack() {
         let id = viewModel.selectedTrack?.id ?? ""
-        viewModel.saveTrackToLibrary(trackID: id)
+        Task {
+            await viewModel.saveTrackToLibrary(trackID: id)
+        }
     }
 }

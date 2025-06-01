@@ -58,7 +58,9 @@ class LibraryController: BaseController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getAllData()
+        Task {
+            await viewModel.getAllData()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,7 +70,9 @@ class LibraryController: BaseController {
     }
     
     @objc private func refreshData() {
-        viewModel.getAllData()
+        Task {
+            await viewModel.getAllData()
+        }
     }
     
     override func setupUI() {
@@ -132,7 +136,9 @@ class LibraryController: BaseController {
             actionSheet.addAction(UIAlertAction(title: "Remove",
                                                 style: .destructive,
                                                 handler: { [weak self] _ in
-                self?.viewModel.deleteAlbumFromLibrary(id: albumToDelete.itemId)
+                Task {
+                    await self?.viewModel.deleteAlbumFromLibrary(id: albumToDelete.itemId)
+                }
             }))
             present(actionSheet,
                     animated: true,
@@ -150,7 +156,9 @@ class LibraryController: BaseController {
             actionSheet.addAction(UIAlertAction(title: "Remove",
                                                 style: .destructive,
                                                 handler: { [weak self] _ in
-                self?.viewModel.deleteTrackFromLibrary(id: trackToDelete.track?.id ?? "")
+                Task {
+                    await self?.viewModel.deleteTrackFromLibrary(id: trackToDelete.track?.id ?? "")
+                }
             }))
             present(actionSheet,
                     animated: true,
@@ -198,7 +206,9 @@ extension LibraryController: UICollectionViewDataSource, UICollectionViewDelegat
             let controller = CreatePlaylistController()
             self?.present(controller, animated: true)
             controller.createPlaylistCallBack = { [weak self] name in
-                self?.viewModel.createPlaylist(name: name)
+                Task {
+                    await self?.viewModel.createPlaylist(name: name)
+                }
             }
         }
         return header

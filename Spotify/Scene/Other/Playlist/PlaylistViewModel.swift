@@ -34,42 +34,59 @@ final class PlaylistViewModel {
         }
     }
     
-    func getPlaylist() {
-        self.state = .loading
-        useCase.getPlaylist(id: playlistID) { data, error in
-            if let data {
-                print(data.primaryColor ?? "")
-                self.playlist = data
-                self.tracks = data.tracks?.items ?? []
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    func getPlaylist() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.getPlaylist(id: playlistID)
+            self.playlist = data
+            self.tracks = data?.tracks?.items ?? []
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    func saveChanges(name: String) {
-        self.state = .loading
-        useCase.editPlaylistName(id: playlistID,
-                                 name: name) { data, error in
+    func saveChanges(name: String) async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await useCase.editPlaylistName(id: playlistID, name: name)
             if data == nil {
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+                await MainActor.run {
+                    state = .loaded
+                    state = .success
+                }
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    func removeTrackFromPlaylist(at index: Int) {
-        useCase.removeItemsFromPlaylist(id: playlistID,
-                                        uris: tracks[index].track?.uri ?? "",
-                                        snapshotId: playlist?.snapshotID ?? "") { data, error in
-            if let data {
-                print(data)
-            } else if let error {
-                self.state = .error(error)
+    func removeTrackFromPlaylist(uri: String, snapshotID: String) async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await  useCase.removeItemsFromPlaylist(id: playlistID,
+                                                                  uris: uri,
+                                                                  snapshotId: snapshotID)
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }

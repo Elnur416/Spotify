@@ -53,89 +53,113 @@ final class HomeViewModel {
         }
     }
     
-    func getAllData() {
-        getCurrentUser()
-        getRecentlyPlayed()
-        getNewReleases()
-        getTopTracks()
-        getTopArtists()
+    func getAllData() async {
+        await getCurrentUser()
+        await getRecentlyPlayed()
+        await getTopArtists()
+        await getTopTracks()
+        await getNewReleases()
     }
     
-    private func getCurrentUser() {
-        state = .loading
-        userUseCase.getCurrentUserProfile { data, error in
-            if let data {
-                self.user = data
-                UserDefaults.standard.set(data.id, forKey: "userID")
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getCurrentUser() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await userUseCase.getCurrentUserProfile()
+            user = data
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func getNewReleases() {
-        state = .loading
-        homeUseCase.getNewRelease { data, error in
-            if let data {
-                guard let items = data.albums?.items else { return }
-                let item: [DataType] = [.init(title: .newRelease,
-                                              items: items,
-                                              type: .album)]
-                self.data.append(contentsOf: item)
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getNewReleases() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await homeUseCase.getNewRelease()
+            guard let items = data?.albums?.items else { return }
+            let item: [DataType] = [.init(title: .newRelease,
+                                          items: items,
+                                          type: .album)]
+            self.data.append(contentsOf: item)
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func getTopArtists() {
-        self.state = .loading
-        homeUseCase.getTopArtists { data, error in
-            if let data {
-                guard let items = data.items else { return }
-                let item: [DataType] = [.init(title: .artists,
-                                              items: items,
-                                              type: .artist)]
-                self.data.append(contentsOf: item)
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getTopArtists() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await homeUseCase.getTopArtists()
+            guard let items = data?.items else { return }
+            let item: [DataType] = [.init(title: .artists,
+                                          items: items,
+                                          type: .artist)]
+            self.data.append(contentsOf: item)
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func getTopTracks() {
-        self.state = .loading
-        homeUseCase.getTopTracks { data, error in
-            if let data {
-                guard let items = data.items else { return }
-                let item: [DataType] = [.init(title: .tracks,
-                                              items: items,
-                                              type: .track)]
-                self.data.append(contentsOf: item)
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getTopTracks() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await homeUseCase.getTopTracks()
+            guard let items = data?.items else { return }
+            let item: [DataType] = [.init(title: .tracks,
+                                          items: items,
+                                          type: .track)]
+            self.data.append(contentsOf: item)
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }
     
-    private func getRecentlyPlayed() {
-        self.state = .loading
-        homeUseCase.getRecentlyTracks { data, error in
-            if let data {
-                guard let items = data.items else { return }
-                self.recentlyPlayed = items
-                self.state = .loaded
-                self.state = .success
-            } else if let error {
-                self.state = .error(error)
+    private func getRecentlyPlayed() async {
+        await MainActor.run {
+            state = .loading
+        }
+        do {
+            let data = try await homeUseCase.getRecentlyTracks()
+            guard let items = data?.items else { return }
+            self.recentlyPlayed = items
+            await MainActor.run {
+                state = .loaded
+                state = .success
+            }
+        } catch {
+            await MainActor.run {
+                state = .error(error.localizedDescription)
             }
         }
     }

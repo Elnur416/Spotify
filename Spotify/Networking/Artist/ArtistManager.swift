@@ -10,51 +10,46 @@ import Foundation
 final class ArtistManager: ArtistUseCase {
     private let manager = NetworkManager()
     
-    func getArtistInfo(id: String, completion: @escaping (ArtistInfo?, String?) -> Void) {
+    func getArtistInfo(id: String) async throws -> ArtistInfo? {
         let path = ArtistEndpoint.artist(id: id).path
-        manager.request(path: path,
-                        model: ArtistInfo.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: ArtistInfo.self)
     }
     
-    func getArtistTopTracks(id: String, completion: @escaping ((ArtistTopTracks?, String?) -> Void)) {
+    func getArtistTopTracks(id: String) async throws -> ArtistTopTracks? {
         let path = ArtistEndpoint.topTracks(id: id).path
-        manager.request(path: path,
-                        model: ArtistTopTracks.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: ArtistTopTracks.self)
     }
     
-    func checkFollowStatus(id: String, completion: @escaping ([Bool]?, String?) -> Void) {
+    func checkFollowStatus(id: String) async throws -> [Bool]? {
         let path = ArtistEndpoint.checkFollow(id: id).path
-        manager.request(path: path,
-                        model: [Bool].self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                        model: [Bool].self)
     }
     
-    func followArtist(id: String, completion: @escaping (Empty?, String?) -> Void) {
+    func followArtist(id: String) async throws -> Empty? {
         let path = ArtistEndpoint.followOrUnfollowArtist.path
         let params: [String: Any] = ["ids": [
             "\(id)"
         ]]
-        manager.request(path: path,
+        return try await manager.request(path: path,
                         model: Empty.self,
                         method: .put,
                         params: params,
-                        encodingType: .json,
-                        completion: completion)
+                        encodingType: .json)
     }
     
-    func unfollowArtist(id: String, completion: @escaping (Empty?, String?) -> Void) {
+    func unfollowArtist(id: String) async throws -> Empty? {
         let path = ArtistEndpoint.followOrUnfollowArtist.path
         let params: [String: Any] = ["ids": [
             "\(id)"
         ]]
-        manager.request(path: path,
+        return try await manager.request(path: path,
                         model: Empty.self,
                         method: .delete,
                         params: params,
-                        encodingType: .json,
-                        completion: completion)
+                        encodingType: .json)
     }
 }
 

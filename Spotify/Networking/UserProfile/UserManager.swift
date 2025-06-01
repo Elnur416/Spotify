@@ -11,24 +11,21 @@ import Alamofire
 final class UserManager: UserUseCase {
     private let manager = NetworkManager()
     
-    func getCurrentUserProfile(completion: @escaping ((UserProfile?, String?) -> Void)) {
+    func getCurrentUserProfile() async throws -> UserProfile? {
         let path = UserEndpoint.currentUser.path
-        manager.request(path: path,
-                        model: UserProfile.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                                         model: UserProfile.self)
     }
     
-    func getUserPlaylists(completion: @escaping ((Playlists?, String?) -> Void)) {
+    func getUserPlaylists() async throws -> Playlists? {
         let path = UserEndpoint.userPlaylists.path
-        manager.request(path: path,
-                        model: Playlists.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                                         model: Playlists.self)
     }
     
-    func getFollowedArtists(completion: @escaping ((Artists?, String?) -> Void)) {
+    func getFollowedArtists() async throws -> Artists? {
         let path = UserEndpoint.followedArtists.path
-        manager.request(path: path,
-                        model: Artists.self,
-                        completion: completion)
+        return try await manager.request(path: path,
+                                         model: Artists.self)
     }
 }

@@ -16,22 +16,25 @@ final class NetworkManager {
                              model: T.Type,
                              method: HTTPMethod = .get,
                              params: Parameters? = nil,
-                             encodingType: EncodingType = .url,
-                             completion: @escaping ((T?, String?) -> Void)) {
-        AuthManager.shared.withValidToken { token in
-            let headers: HTTPHeaders = [
-                "Authorization": "Bearer \(token)"
-            ]
+                             encodingType: EncodingType = .url) async throws -> T? {
+        
+        let token = try await AuthManager.shared.validToken()
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(token)"
+        ]
+        
+        return try await withCheckedThrowingContinuation { continuation in
             AF.request(path,
                        method: method,
                        parameters: params,
                        encoding: encodingType == .url ? URLEncoding.default : JSONEncoding.default,
-                       headers: headers).responseDecodable(of: model.self) { response in
+                       headers: headers).responseDecodable(of: model) { response in
                 switch response.result {
                 case .success(let data):
-                    completion(data, nil)
+                    continuation.resume(returning: data)
                 case .failure(let error):
-                    completion(nil, error.localizedDescription)
+                    continuation.resume(throwing: error)
                 }
             }
         }
