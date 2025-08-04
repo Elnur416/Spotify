@@ -2,10 +2,18 @@
 
 ![2nd Presentation](https://github.com/Elnur416/Spotify/blob/2ccb6e5f4055b693ef5ba03a6efb5939daeef5c3/Spotify-03.png)
 
-![3rd Presentation](screenshots/3.png)
+![3rd Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-04.png)
 
-![4th Presentation](screenshots/4.png)
+![4th Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-05.png)
 
-![5th Presentation](screenshots/5.png)
+![5th Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-06.png)
 
-![6th Presentation](screenshots/6.png)
+![6th Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-07.png)
+
+![7th Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-08.png)
+
+![8th Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-09.png)
+
+![9th Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-10.png)
+
+![10th Presentation](https://github.com/Elnur416/Spotify/blob/4bdd8be85b2664590526d0fefebb35b3e5f24fca/Spotify-11.png)
