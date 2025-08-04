@@ -1,4 +1,4 @@
-![1st Presentation]([screenshots/1.png](https://github.com/Elnur416/Spotify/blob/14ad2840512a77454e306a67b0bf6a5684687316/Spotify-02.png))
+![1st Presentation](https://github.com/Elnur416/Spotify/blob/14ad2840512a77454e306a67b0bf6a5684687316/Spotify-02.png)
 
 ![2nd Presentation](screenshots/2.png)
 
